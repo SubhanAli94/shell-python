@@ -47,7 +47,7 @@ def main():
 
             if command:
                 arguments = input_list[1:]
-                subprocess.run([command] + arguments)
+                subprocess.run([input_list[0]] + arguments)
 
                 print(f"Program was passed: {len(input_list)} (including program name)")
             else:
