@@ -43,7 +43,8 @@ def main():
                 if user_input[5] == "'" and user_input[-1] == "'":
                     print(user_input[6:-1])
                 else:
-                    print(user_input[5:])
+                    #remove more than once space between words
+                    print(' '.join(user_input[5:].split()))
             elif user_input == 'pwd':
                 print(os.getcwd())
             elif user_input.startswith("cd "):
