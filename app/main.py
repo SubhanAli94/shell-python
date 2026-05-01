@@ -40,7 +40,7 @@ def main():
                 break
             if user_input.startswith("echo "):
                 print(user_input[5:])
-            if user_input == 'pwd':
+            elif user_input == 'pwd':
                 print(os.getcwd())
             else:
                 input_list = user_input.split()
