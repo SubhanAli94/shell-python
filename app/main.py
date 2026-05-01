@@ -12,6 +12,7 @@ def iterate_paths(command):
     for path in path_list:
         file_path = os.path.join(path, command)
         if is_executable(file_path):
+            print(f"{command} is {file_path}")
             return file_path
     return None
 
@@ -42,7 +43,8 @@ def main():
             if user_input.startswith("echo "):
                 print(user_input[5:])
             
-            command = iterate_paths(user_input)
+            command = iterate_paths(user_input.split()[0])
+
             if command:
                 arguments = user_input.split()[1:]
                 subprocess.run([command] + arguments)
