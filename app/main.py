@@ -39,12 +39,20 @@ def main():
             if user_input == 'exit':
                 break
             if user_input.startswith("echo "):
-                #handle single quotes
-                if user_input[5] == "'" and user_input[-1] == "'":
-                    print(user_input[6:-1])
-                else:
-                    #remove more than once space between words
-                    print(' '.join(user_input[5:].split()))
+                is_in_single_quotes = False
+                output = ""
+                for char in user_input[5:]:
+                    if char == "'":
+                        is_in_single_quotes = not is_in_single_quotes
+                        continue
+                    
+                    if char == ' ' and not is_in_single_quotes:
+                        if output[-1] == ' ':
+                            continue
+
+                    output += char
+
+                print(output)
             elif user_input == 'pwd':
                 print(os.getcwd())
             elif user_input.startswith("cd "):
