@@ -21,9 +21,6 @@ def main():
                         if(os.access(file_path, os.X_OK)):
                             print(f"{executable_to_find} is {file_path}")
                             break
-                        else:
-                            print(f"{command}: not found")
-                        
                 else:
                     print(f"{command}: not found")
         else:
