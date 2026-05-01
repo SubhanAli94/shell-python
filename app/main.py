@@ -1,3 +1,4 @@
+import os
 import sys
 
 
@@ -8,10 +9,23 @@ def main():
         user_input = input()
         
         if user_input.startswith('type '):
-            if user_input[5:] == 'echo' or user_input[5:] == 'exit' or user_input[5:] == 'type':
-                print(f"{user_input[5:]} is a shell builtin")
+            command = user_input[5:]
+            if command == 'echo' or command == 'exit' or command == 'type':
+                print(f"{command} is a shell builtin")
             else:
-                print(f"{user_input[5:]}: not found")
+                executable_to_find = command
+                path_list = os.environ['PATH'].split(os.pathsep)
+                for path in path_list:
+                    file_path = os.path.join(path, executable_to_find)
+                    if(os.path.isfile(file_path)):
+                        if(os.access(file_path, os.X_OK)):
+                            print(f"{executable_to_find} is {file_path}")
+                            break
+                        else:
+                            print(f"{command}: not found")
+                        
+                else:
+                    print(f"{command}: not found")
         else:
             if user_input == 'exit':
                 break
