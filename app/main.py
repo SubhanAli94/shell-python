@@ -4,7 +4,7 @@ import subprocess
 
 
 def is_builtin(command):
-    builtins = ['echo', 'exit', 'type']
+    builtins = ['echo', 'exit', 'type', 'pwd']
     return command in builtins
 
 def iterate_paths(command):
