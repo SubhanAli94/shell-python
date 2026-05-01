@@ -47,7 +47,6 @@ def main():
 
                 if command:
                     arguments = input_list[1:]
-                    # print(f"Program was passed: {len(input_list)} args (including program name)")
                     subprocess.run([input_list[0]] + arguments)
                 else:
                     print(f"{user_input}: command not found")
