@@ -9,7 +9,11 @@ def main():
         
         if user_input == 'exit':
             break
-        print(f"{user_input}: command not found")
+        
+        if user_input.startswith("echo "):
+            print(user_input[5:])
+        else:
+            print(f"{user_input}: command not found")
 
     pass
 
