@@ -43,13 +43,14 @@ def main():
             if user_input.startswith("echo "):
                 print(user_input[5:])
             
-            command = iterate_paths(user_input.split()[0])
+            input_list = user_input.split()
+            command = iterate_paths(input_list[0])
 
             if command:
-                arguments = user_input.split()[1:]
+                arguments = input_list[1:]
                 subprocess.run([command] + arguments)
 
-                print(f"{user_input} is {command}")
+                print(f"Program was passed: {len(input_list)} (including program name)")
             else:
                 print(f"{user_input}: command not found")
 
