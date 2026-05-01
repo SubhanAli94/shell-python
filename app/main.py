@@ -42,6 +42,11 @@ def main():
                 print(user_input[5:])
             elif user_input == 'pwd':
                 print(os.getcwd())
+            elif user_input.startswith("cd "):
+                try:
+                    os.chdir(user_input[3:])
+                except FileNotFoundError:
+                    print(f"cd: {user_input[3:]}: No such file or directory")
             else:
                 input_list = user_input.split()
                 command = iterate_paths(input_list[0])
