@@ -39,7 +39,11 @@ def main():
             if user_input == 'exit':
                 break
             if user_input.startswith("echo "):
-                print(user_input[5:])
+                #handle single quotes
+                if user_input[5] == "'" and user_input[-1] == "'":
+                    print(user_input[6:-1])
+                else:
+                    print(user_input[5:])
             elif user_input == 'pwd':
                 print(os.getcwd())
             elif user_input.startswith("cd "):
