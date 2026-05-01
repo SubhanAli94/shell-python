@@ -44,7 +44,10 @@ def main():
                 print(os.getcwd())
             elif user_input.startswith("cd "):
                 try:
-                    os.chdir(user_input[3:])
+                    if user_input[3:] == "~":
+                        os.chdir(os.environ['HOME'])
+                    else:
+                        os.chdir(user_input[3:])
                 except FileNotFoundError:
                     print(f"cd: {user_input[3:]}: No such file or directory")
             else:
