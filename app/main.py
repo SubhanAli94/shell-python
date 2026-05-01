@@ -12,7 +12,6 @@ def iterate_paths(command):
     for path in path_list:
         file_path = os.path.join(path, command)
         if is_executable(file_path):
-            print(f"{command} is {file_path}")
             return file_path
     return None
 
