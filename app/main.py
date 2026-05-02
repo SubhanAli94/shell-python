@@ -120,7 +120,8 @@ def main():
                 command_path = iterate_paths(input_list[0])
                 command = input_list[0]
 
-                arguments = [arg.replace("'" , "") for arg in arguments]
+                arguments = [arg.replace("'", "") for arg in arguments if arg != ' ']
+                
                 if command_path:
                     subprocess.run([command] + arguments)
                 else:
