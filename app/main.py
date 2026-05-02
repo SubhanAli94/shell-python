@@ -110,7 +110,9 @@ def main():
             else:
                 arguments = []
                 if "'" in user_input:
-                    arguments = prepare_quoted_arguments( " ".join(user_input.split()[1:]))
+                    index = user_input.find(" ")
+                    args = user_input[index+1:]
+                    arguments = prepare_quoted_arguments(args)
                 else:
                     arguments = user_input.split()[1:]
 
