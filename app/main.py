@@ -108,9 +108,9 @@ def main():
                 except FileNotFoundError:
                     print(f"cd: {user_input[3:]}: No such file or directory")
             else:
+                arguments = []
                 if "'" in user_input:
-                    output = process_quoted_command(user_input[:user_input.index(' ')])
-                    arguments = prepare_quoted_arguments(output)
+                    arguments = prepare_quoted_arguments( " ".join(user_input.split()[1:]))
                 else:
                     arguments = user_input.split()[1:]
 
