@@ -108,9 +108,7 @@ def main():
                 except FileNotFoundError:
                     print(f"cd: {user_input[3:]}: No such file or directory")
             else:
-                breakpoint()
                 if "'" in user_input:
-                    breakpoint()
                     output = process_quoted_command(user_input[:user_input.index(' ')])
                     arguments = prepare_quoted_arguments(output)
                 else:
