@@ -118,7 +118,7 @@ def main():
                 command_path = iterate_paths(input_list[0])
                 command = input_list[0]
 
-                print(f"Executing command: {command} with arguments: {arguments}")
+                # print(f"Executing command: {command} with arguments: {arguments}")
                 if command_path:
                     subprocess.run([command] + arguments)
                 else:
