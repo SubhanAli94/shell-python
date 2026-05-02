@@ -18,6 +18,61 @@ def iterate_paths(command):
 def is_executable(file_path):
     return os.path.isfile(file_path) and os.access(file_path, os.X_OK)
 
+def process_quoted_command(user_input):
+    is_in_single_quotes = False
+    output = ""
+    for char in user_input[5:]:
+        if char == "'":
+            output += char
+            is_in_single_quotes = not is_in_single_quotes
+            continue
+        
+        if char == ' ' and not is_in_single_quotes:
+            if output[-1] == ' ':
+                continue
+
+        output += char
+
+    return output
+
+def prepare_quoted_arguments(arguments):
+    params_output = []
+    current_param = ""
+    is_in_single_quotes = False
+    for char in arguments:
+        if char == ' ':
+            if is_in_single_quotes:
+                current_param += char
+                continue
+            else:
+                if len(current_param) > 0:
+                    params_output.append(current_param)
+                    current_param = ""
+                    continue
+
+        if char == "'":
+            if is_in_single_quotes:
+                is_in_single_quotes = False
+                if len(current_param) > 0:
+                    params_output.append(f"'{current_param}'")
+                    current_param = ""
+                continue
+                
+            else:
+                is_in_single_quotes = True
+                if len(current_param) > 0:
+                    params_output.append(current_param)
+                    current_param = ""
+                continue
+
+        
+        current_param += char
+    
+    if len(current_param) > 0:
+        params_output.append(current_param)
+    
+    return params_output
+
 def main():
 
     while True:
@@ -39,19 +94,8 @@ def main():
             if user_input == 'exit':
                 break
             if user_input.startswith("echo "):
-                is_in_single_quotes = False
-                output = ""
-                for char in user_input[5:]:
-                    if char == "'":
-                        is_in_single_quotes = not is_in_single_quotes
-                        continue
-                    
-                    if char == ' ' and not is_in_single_quotes:
-                        if output[-1] == ' ':
-                            continue
-
-                    output += char
-
+                output = process_quoted_command(user_input)
+                output = output.replace("'", "")
                 print(output)
             elif user_input == 'pwd':
                 print(os.getcwd())
@@ -64,12 +108,20 @@ def main():
                 except FileNotFoundError:
                     print(f"cd: {user_input[3:]}: No such file or directory")
             else:
-                input_list = user_input.split()
-                command = iterate_paths(input_list[0])
+                breakpoint()
+                if "'" in user_input:
+                    breakpoint()
+                    output = process_quoted_command(user_input[:user_input.index(' ')])
+                    arguments = prepare_quoted_arguments(output)
+                else:
+                    arguments = user_input.split()[1:]
 
-                if command:
-                    arguments = input_list[1:]
-                    subprocess.run([input_list[0]] + arguments)
+                input_list = user_input.split()
+                command_path = iterate_paths(input_list[0])
+                command = input_list[0]
+
+                if command_path:
+                    subprocess.run([command] + arguments)
                 else:
                     print(f"{user_input}: command not found")
 
