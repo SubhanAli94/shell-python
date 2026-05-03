@@ -52,7 +52,6 @@ def process_type_command(args):
 
 def process_echo_command(arg):
     output = parse_args(arg)
-    print(output)
     print(*output)
 
 def process_cd_command(arg):
