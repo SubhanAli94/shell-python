@@ -74,9 +74,7 @@ def prepare_quoted_arguments(arguments):
     return params_output
 
 def process_type_command(args):
-    print(args)
     args = "".join(args).split()
-    print(args)
     for arg in args:
         if is_builtin(arg):
             print(f"{arg} is a shell builtin")
@@ -117,8 +115,7 @@ def main():
             case 'pwd':
                 print(os.getcwd())
             case 'cd':
-                process_cd_command(args[0] if args else "")
-                
+                process_cd_command(args[0] if args else "")  
             case _:
                 arguments = []
                 if "'" in user_input:
