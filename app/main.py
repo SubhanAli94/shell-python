@@ -2,7 +2,6 @@ import os
 import sys
 import subprocess
 
-
 def is_builtin(command):
     builtins = ['echo', 'exit', 'type', 'pwd']
     return command in builtins
@@ -38,61 +37,6 @@ def parse_args(args):
 
     output.append(curr)
     return output
-
-def process_quoted_command(arg):
-    is_in_single_quotes = False
-    output = ""
-    for char in arg:
-        if char == "'":
-            output += char
-            is_in_single_quotes = not is_in_single_quotes
-            continue
-        
-        if char == ' ' and not is_in_single_quotes:
-            if output[-1] == ' ':
-                continue
-
-        output += char
-
-    return output
-
-def prepare_quoted_arguments(arguments):
-    params_output = []
-    current_param = ""
-    is_in_single_quotes = False
-    for char in arguments:
-        if char == ' ':
-            if is_in_single_quotes:
-                current_param += char
-                continue
-            else:
-                if len(current_param) > 0:
-                    params_output.append(current_param)
-                    current_param = ""
-                    continue
-
-        if char == "'":
-            if is_in_single_quotes:
-                is_in_single_quotes = False
-                if len(current_param) > 0:
-                    params_output.append(f"'{current_param}'")
-                    current_param = ""
-                continue
-                
-            else:
-                is_in_single_quotes = True
-                if len(current_param) > 0:
-                    params_output.append(current_param)
-                    current_param = ""
-                continue
-
-        
-        current_param += char
-    
-    if len(current_param) > 0:
-        params_output.append(current_param)
-    
-    return params_output
 
 def process_type_command(args):
     args = args.split()
@@ -138,7 +82,7 @@ def main():
             case 'cd':
                 process_cd_command(args)  
             case _:
-                
+                print(args)
                 args = parse_args(args)
                 command_path = iterate_paths(command)
                 if command_path:
@@ -147,7 +91,6 @@ def main():
                     print(f"{user_input}: command not found")
 
     pass
-
 
 if __name__ == "__main__":
     main()
