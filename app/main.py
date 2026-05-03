@@ -30,7 +30,7 @@ def parse_args(args):
             continue
         
         if not is_escaped:
-            if char == '"':
+            if char == '"' and not is_in_quotes:
                 is_in_double_quotes = not is_in_double_quotes
                 continue
 
