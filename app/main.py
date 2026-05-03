@@ -73,41 +73,53 @@ def prepare_quoted_arguments(arguments):
     
     return params_output
 
+def process_type_command(args):
+    print(args)
+    args = "".join(args).split()
+    print(args)
+    for arg in args:
+        if is_builtin(arg):
+            print(f"{arg} is a shell builtin")
+        else:
+            file_path = iterate_paths(arg)
+            if file_path:
+                print(f"{arg} is {file_path}")
+            else:
+                print(f"{arg}: not found")
+
+def process_echo_command(user_input):
+    output = process_quoted_command(user_input)
+    output = output.replace("'", "")
+    print(output)
+
+def process_cd_command(arg):
+    try:
+        if arg == "~":
+            os.chdir(os.environ['HOME'])
+        else:
+            os.chdir(arg)
+    except FileNotFoundError:
+        print(f"cd: {arg}: No such file or directory")
+
 def main():
 
     while True:
         sys.stdout.write("$ ")
         user_input = input()
-        
-        if user_input.startswith('type '):
-            command = user_input[5:]
-            if is_builtin(command):
-                print(f"{command} is a shell builtin")
-            else:
-                file_path = iterate_paths(command)
-                if file_path:
-                    print(f"{command} is {file_path}")
-                else:
-                    print(f"{command}: not found")
-        
-        else:
-            if user_input == 'exit':
+        command, *args = user_input.split(" ", 1)
+        match command:
+            case 'exit':
                 break
-            if user_input.startswith("echo "):
-                output = process_quoted_command(user_input)
-                output = output.replace("'", "")
-                print(output)
-            elif user_input == 'pwd':
+            case 'type':
+                process_type_command(args) 
+            case 'echo':
+                process_echo_command(user_input)
+            case 'pwd':
                 print(os.getcwd())
-            elif user_input.startswith("cd "):
-                try:
-                    if user_input[3:] == "~":
-                        os.chdir(os.environ['HOME'])
-                    else:
-                        os.chdir(user_input[3:])
-                except FileNotFoundError:
-                    print(f"cd: {user_input[3:]}: No such file or directory")
-            else:
+            case 'cd':
+                process_cd_command(args[0] if args else "")
+                
+            case _:
                 arguments = []
                 if "'" in user_input:
                     index = user_input.find(" ")
