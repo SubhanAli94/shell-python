@@ -18,6 +18,27 @@ def iterate_paths(command):
 def is_executable(file_path):
     return os.path.isfile(file_path) and os.access(file_path, os.X_OK)
 
+def parse_args(args):
+    is_in_quotes = False
+    output = []
+    curr = ""
+
+    for char in args:
+        if char == "'":
+            is_in_quotes = not is_in_quotes
+            continue
+
+        if char == " " and not is_in_quotes:
+            if curr:
+                output.append(curr)
+                curr = ""
+            continue
+
+        curr += char
+
+    output.append(curr)
+    return output
+
 def process_quoted_command(arg):
     is_in_single_quotes = False
     output = ""
@@ -86,9 +107,10 @@ def process_type_command(args):
                 print(f"{arg}: not found")
 
 def process_echo_command(arg):
-    output = process_quoted_command(arg)
-    output = output.replace("'", "")
-    print(output)
+    output = parse_args(arg)
+    print(*output)
+    # output = output.replace("'", "")
+    # print(output)
 
 def process_cd_command(arg):
     try:
