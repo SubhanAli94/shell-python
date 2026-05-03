@@ -18,10 +18,10 @@ def iterate_paths(command):
 def is_executable(file_path):
     return os.path.isfile(file_path) and os.access(file_path, os.X_OK)
 
-def process_quoted_command(user_input):
+def process_quoted_command(arg):
     is_in_single_quotes = False
     output = ""
-    for char in user_input[5:]:
+    for char in arg:
         if char == "'":
             output += char
             is_in_single_quotes = not is_in_single_quotes
@@ -74,7 +74,7 @@ def prepare_quoted_arguments(arguments):
     return params_output
 
 def process_type_command(args):
-    args = "".join(args).split()
+    args = args.split()
     for arg in args:
         if is_builtin(arg):
             print(f"{arg} is a shell builtin")
@@ -85,8 +85,8 @@ def process_type_command(args):
             else:
                 print(f"{arg}: not found")
 
-def process_echo_command(user_input):
-    output = process_quoted_command(user_input)
+def process_echo_command(arg):
+    output = process_quoted_command(arg)
     output = output.replace("'", "")
     print(output)
 
@@ -105,17 +105,18 @@ def main():
         sys.stdout.write("$ ")
         user_input = input()
         command, *args = user_input.split(" ", 1)
+        args = "".join(args)
         match command:
             case 'exit':
                 break
             case 'type':
                 process_type_command(args) 
             case 'echo':
-                process_echo_command(user_input)
+                process_echo_command(args)
             case 'pwd':
                 print(os.getcwd())
             case 'cd':
-                process_cd_command(args[0] if args else "")  
+                process_cd_command(args)  
             case _:
                 arguments = []
                 if "'" in user_input:
