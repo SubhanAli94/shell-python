@@ -78,7 +78,6 @@ def process_cd_command(arg):
         print(f"cd: {arg}: No such file or directory")
 
 def main():
-
     while True:
         sys.stdout.write("$ ")
         user_input = input()
