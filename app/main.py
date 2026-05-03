@@ -2,6 +2,7 @@ import os
 import sys
 import subprocess
 
+
 def is_builtin(command):
     builtins = ['echo', 'exit', 'type', 'pwd']
     return command in builtins
@@ -82,7 +83,6 @@ def main():
             case 'cd':
                 process_cd_command(args)  
             case _:
-                print(args)
                 args = parse_args(args)
                 command_path = iterate_paths(command)
                 if command_path:
@@ -91,6 +91,7 @@ def main():
                     print(f"{user_input}: command not found")
 
     pass
+
 
 if __name__ == "__main__":
     main()
