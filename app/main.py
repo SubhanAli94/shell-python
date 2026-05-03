@@ -138,22 +138,11 @@ def main():
             case 'cd':
                 process_cd_command(args)  
             case _:
-                arguments = []
-                if "'" in user_input:
-                    index = user_input.find(" ")
-                    args = user_input[index+1:]
-                    arguments = prepare_quoted_arguments(args)
-                else:
-                    arguments = user_input.split()[1:]
-
-                input_list = user_input.split()
-                command_path = iterate_paths(input_list[0])
-                command = input_list[0]
-
-                arguments = [arg.replace("'", "") for arg in arguments if arg != ' ']
                 
+                args = parse_args(args)
+                command_path = iterate_paths(command)
                 if command_path:
-                    subprocess.run([command] + arguments)
+                    subprocess.run([command] + args)
                 else:
                     print(f"{user_input}: command not found")
 
