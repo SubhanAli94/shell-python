@@ -109,8 +109,6 @@ def process_type_command(args):
 def process_echo_command(arg):
     output = parse_args(arg)
     print(*output)
-    # output = output.replace("'", "")
-    # print(output)
 
 def process_cd_command(arg):
     try:
