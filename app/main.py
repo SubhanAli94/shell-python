@@ -25,7 +25,7 @@ def parse_args(args):
     curr = ""
     is_escaped = False
     for char in args:
-        if char == '\\' and not is_escaped:
+        if char == '\\' and not is_escaped and not is_in_quotes:
             is_escaped = not is_escaped
             continue
         
