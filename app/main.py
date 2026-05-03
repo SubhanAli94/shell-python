@@ -20,15 +20,28 @@ def is_executable(file_path):
 
 def parse_args(args):
     is_in_quotes = False
+    is_in_double_quotes = False
     output = []
     curr = ""
 
+    """
+     if the char is " then is_in_double_quotes = not is_in_double_quotes  
+        continue
+    
+     if the char is ' and not is_ind_q:
+        
+    """
     for char in args:
-        if char == "'":
+
+        if char == '"':
+            is_in_double_quotes = not is_in_double_quotes
+            continue
+
+        if char == "'" and not is_in_double_quotes:
             is_in_quotes = not is_in_quotes
             continue
 
-        if char == " " and not is_in_quotes:
+        if char == " " and not is_in_quotes and not is_in_double_quotes:
             if curr:
                 output.append(curr)
                 curr = ""
@@ -37,6 +50,7 @@ def parse_args(args):
         curr += char
 
     output.append(curr)
+
     return output
 
 def process_type_command(args):
@@ -91,7 +105,6 @@ def main():
                     print(f"{user_input}: command not found")
 
     pass
-
 
 if __name__ == "__main__":
     main()
