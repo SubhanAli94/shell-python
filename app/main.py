@@ -23,29 +23,28 @@ def parse_args(args):
     is_in_double_quotes = False
     output = []
     curr = ""
-
-    """
-     if the char is " then is_in_double_quotes = not is_in_double_quotes  
-        continue
-    
-     if the char is ' and not is_ind_q:
-        
-    """
+    is_escaped = False
     for char in args:
-
-        if char == '"':
-            is_in_double_quotes = not is_in_double_quotes
+        if char == '\\' and not is_escaped:
+            is_escaped = not is_escaped
             continue
+        
+        if not is_escaped:
+            if char == '"':
+                is_in_double_quotes = not is_in_double_quotes
+                continue
 
-        if char == "'" and not is_in_double_quotes:
-            is_in_quotes = not is_in_quotes
-            continue
+            if char == "'" and not is_in_double_quotes:
+                is_in_quotes = not is_in_quotes
+                continue
 
-        if char == " " and not is_in_quotes and not is_in_double_quotes:
-            if curr:
-                output.append(curr)
-                curr = ""
-            continue
+            if char == " " and not is_in_quotes and not is_in_double_quotes:
+                if curr:
+                    output.append(curr)
+                    curr = ""
+                continue
+        else:
+            is_escaped = not is_escaped
 
         curr += char
 
