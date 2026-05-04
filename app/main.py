@@ -112,7 +112,7 @@ def process_cd_command(arg):
 
 def write_output_to_file(file_name, output, file_mode = 'w'):
     with open(file_name, file_mode) as file:
-        output += '\n' if file_mode == 'a' else ''
+        output += '\n'
         file.write(output)
 
 
