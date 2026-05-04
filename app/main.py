@@ -29,13 +29,15 @@ def parse_args(args):
         if char == '1' and args[idx + 1] == ">":
             idx = idx + 2
             if not is_escaped and not is_in_quotes and not is_in_double_quotes:
-                file_name = args[idx:].strip()
+                file_name = "".join([arg for arg in args[idx:].strip() if arg != '"'])
+                # print(f"file name: {file_name}")
                 if curr: output.append(curr)
                 return output, file_name
         elif char == ">":
             idx = idx + 1
             if not is_escaped and not is_in_quotes and not is_in_double_quotes:
-                file_name = args[idx:].strip()
+                file_name = "".join([arg for arg in args[idx:].strip() if arg != '"'])
+                # print(f"file name: {file_name}")
                 if curr: output.append(curr)
                 return output, file_name
 
@@ -102,6 +104,8 @@ def main():
         argl = parsed_input[1:]
         args = " ".join(parsed_input[1:])
 
+        print(f"Command: {command}")
+        print(f"Args: {args}")
         match command:
             case 'exit':
                 break
@@ -112,7 +116,6 @@ def main():
                 elif output != None:
                     print(output)
             case 'echo':
-                # echo Hello Emily 1> /tmp/owl/pig.m
                 if file_name:
                     write_output_to_file(file_name, args)
                 else:
