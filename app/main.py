@@ -26,6 +26,13 @@ def parse_args(args):
     is_escaped = False
     file_name = ""
     for idx, char in enumerate(args):
+
+        if char == '2' and idx+1 < len(args) and args[idx +1] == ">":
+            idx = idx + 2
+            if not is_escaped and not is_in_quotes and not is_in_double_quotes: 
+                err_file_name = "".join([arg for arg in args[idx:].strip() if arg != '"'])
+                return output, None, err_file_name
+
         if char == '1' and idx + 1 < len(args) and args[idx + 1] == ">":
             idx = idx + 2
             if not is_escaped and not is_in_quotes and not is_in_double_quotes:
@@ -99,7 +106,7 @@ def main():
     while True:
         sys.stdout.write("$ ")
         user_input = input()
-        parsed_input, file_name = parse_args(user_input)
+        parsed_input, op_file_name, err_file_name = parse_args(user_input)
         command = parsed_input[0]
         argl = parsed_input[1:]
         args = " ".join(parsed_input[1:])
@@ -109,19 +116,26 @@ def main():
                 break
             case 'type':
                 output = process_type_command(args) 
-                if output != None and file_name:
-                    write_output_to_file(file_name, output)
+                if output != None:
+                    if op_file_name:
+                        write_output_to_file(op_file_name, output)
+                    elif err_file_name:
+                        write_output_to_file(err_file_name, output)
                 elif output != None:
                     print(output)
             case 'echo':
-                if file_name:
-                    write_output_to_file(file_name, args)
+                if op_file_name:
+                    write_output_to_file(op_file_name, args)
+                elif err_file_name:
+                    write_output_to_file(err_file_name, args)
                 else:
                     print(args)
             case 'pwd':
                 output = os.getcwd()
-                if file_name:
-                    write_output_to_file(file_name, output)
+                if op_file_name:
+                    write_output_to_file(op_file_name, output)
+                elif err_file_name:
+                    write_output_to_file(err_file_name, output)
                 else:
                     print(output)
             case 'cd':
@@ -131,19 +145,24 @@ def main():
                 if command_path:
                     p = subprocess.run([command] + argl, capture_output=True, text=True)
                     # cat /tmp/baz/blueberry nonexistent 1> /tmp/foo/quz.md
-
-                    if p.stderr.strip():
-                        print(p.stderr.strip())
                     
-                    if file_name and p.stdout.strip():
-                        write_output_to_file(file_name, p.stdout.strip())
-                    else:
-                        print(p.stdout.strip())
-
+                    stripped_err = p.stderr.strip()
+                    stripped_op = p.stdout.strip()
+                    if stripped_err:
+                        if err_file_name:
+                            write_output_to_file(err_file_name, stripped_err)
+                        else:
+                            print(stripped_err)
+                            
+                    if stripped_op:
+                        if op_file_name and stripped_op:
+                            write_output_to_file(op_file_name, stripped_op)
+                        else:
+                            print(stripped_op)
                 else:
                     print(f"{user_input}: command not found")
         
-        file_name = ""
+        op_file_name = ""
                     
     pass
 
