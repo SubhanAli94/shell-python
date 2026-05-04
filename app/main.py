@@ -131,7 +131,7 @@ def main():
                     p = subprocess.run([command] + argl, capture_output=True, text=True)
                     
                     if p.stderr:
-                        print(p.stderr)
+                        print(p.stderr.strip())
                     elif file_name:
                         write_output_to_file(file_name, p.stdout)
                     else:
