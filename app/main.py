@@ -56,13 +56,14 @@ def process_type_command(args):
     args = args.split()
     for arg in args:
         if is_builtin(arg):
-            print(f"{arg} is a shell builtin")
+            return f"{arg} is a shell builtin"
         else:
             file_path = iterate_paths(arg)
             if file_path:
-                print(f"{arg} is {file_path}")
+                return f"{arg} is {file_path}"
             else:
                 print(f"{arg}: not found")
+                return None
 
 def process_cd_command(arg):
     try:
@@ -73,42 +74,62 @@ def process_cd_command(arg):
     except FileNotFoundError:
         print(f"cd: {arg}: No such file or directory")
 
+def write_output_to_file(file_name, output):
+    with open(file_name, 'w') as file:
+        file.write(output)
+
 def main():
+    
     while True:
+        is_output_write_required = True
+
         sys.stdout.write("$ ")
         user_input = input()
             
         parsed_input = parse_args(user_input)
         command = parsed_input[0]
+        file_name = ''
+        if '>' in parsed_input:
+            is_output_write_required = True
+            file_name = parsed_input[-1]
+            write_op_idx = parsed_input[1:].index('>')
+            parsed_input = parsed_input[:write_op_idx+1]
+
         argl = parsed_input[1:]
         args = " ".join(parsed_input[1:])
 
-        output = ""
         match command:
             case 'exit':
                 break
             case 'type':
-                process_type_command(args) 
+                output = process_type_command(args) 
+                if output != None:
+                    write_output_to_file(file_name, output)
             case 'echo':
-                output = args
-                print(args)
+                if(is_output_write_required):
+                    write_output_to_file(file_name, args)
+                else:
+                    print(args)
             case 'pwd':
-                print(os.getcwd())
+                output = os.getcwd()
+                if(is_output_write_required):
+                    write_output_to_file(file_name, output)
+                else:
+                    print(output)
             case 'cd':
                 process_cd_command(args)  
             case _:
                 command_path = iterate_paths(command)
                 
                 if command_path:
-                    subprocess.run([command] + argl)
+                    p = subprocess.run([command] + argl, capture_output=True, text=True)
+                    
+                    if p.stderr:
+                        print(p.stderr)
+                    else:
+                        write_output_to_file(file_name, p.stdout)
                 else:
                     print(f"{user_input}: command not found")
-        
-        if ">" in argl[-2]:
-            filename = argl[-1]
-            if filename:
-                with open(filename, 'w') as file:
-                    file.write(output)
                     
     pass
 
