@@ -118,7 +118,7 @@ def main():
                 process_cd_command(args)  
             case _:
                 command_path = iterate_paths(command)
-                
+                print(argl)
                 if command_path:
                     p = subprocess.run([command] + argl, capture_output=True, text=True)
                     
