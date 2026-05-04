@@ -81,8 +81,11 @@ def main():
     while True:
         sys.stdout.write("$ ")
         user_input = input()
-        command, *args = user_input.split(" ", 1)
-        args = "".join(args)
+        
+        procedded_input = parse_args(user_input)
+        command = procedded_input[0]
+        args = "".join(procedded_input[1:])
+            
         match command:
             case 'exit':
                 break
@@ -95,7 +98,7 @@ def main():
             case 'cd':
                 process_cd_command(args)  
             case _:
-                args = parse_args(args)
+                
                 command_path = iterate_paths(command)
                 if command_path:
                     subprocess.run([command] + args)
