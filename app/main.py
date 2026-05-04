@@ -129,7 +129,7 @@ def main():
                     elif file_name:
                         write_output_to_file(file_name, p.stdout)
                     else:
-                        print(p.stdout)
+                        print("----", p.stdout)
                 else:
                     print(f"{user_input}: command not found")
                     
