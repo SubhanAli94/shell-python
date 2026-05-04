@@ -26,10 +26,18 @@ def parse_args(args):
     is_escaped = False
     file_name = ""
     for idx, char in enumerate(args):
-        if (char == '>' or (char == '1' and args[idx + 1] == ">")) and not is_escaped and not is_in_quotes and not is_in_double_quotes:
-            file_name = args[idx+1:].strip()
-            if curr: output.append(curr)
-            return output, file_name
+        if char == '1' and args[idx + 1] == ">":
+            idx = idx + 2
+            if not is_escaped and not is_in_quotes and not is_in_double_quotes:
+                file_name = args[idx:].strip()
+                if curr: output.append(curr)
+                return output, file_name
+        elif char == ">":
+            idx = idx + 1
+            if not is_escaped and not is_in_quotes and not is_in_double_quotes:
+                file_name = args[idx:].strip()
+                if curr: output.append(curr)
+                return output, file_name
 
         if char == '\\' and not is_escaped and not is_in_quotes:
             is_escaped = not is_escaped
@@ -104,6 +112,7 @@ def main():
                 elif output != None:
                     print(output)
             case 'echo':
+                # echo Hello Emily 1> /tmp/owl/pig.m
                 if file_name:
                     write_output_to_file(file_name, args)
                 else:
