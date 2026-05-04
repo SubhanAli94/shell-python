@@ -82,10 +82,8 @@ def main():
         sys.stdout.write("$ ")
         user_input = input()
         
-        proceeded_input = parse_args(user_input)
-        command = proceeded_input[0]
-        argl = proceeded_input[1:]
-        args = "".join(proceeded_input[1:])
+        command, *args = user_input.split(" ", 1)
+        args = "".join(args)
             
         match command:
             case 'exit':
@@ -101,6 +99,7 @@ def main():
             case _:
                 command_path = iterate_paths(command)
                 if command_path:
+                    
                     subprocess.run([command] + argl)
                 else:
                     print(f"{user_input}: command not found")
