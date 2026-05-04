@@ -26,7 +26,7 @@ def parse_args(args):
     is_escaped = False
     file_name = ""
     for idx, char in enumerate(args):
-        if char == '1' and args[idx + 1] == ">":
+        if char == '1' and idx + 1 < len(args) and args[idx + 1] == ">":
             idx = idx + 2
             if not is_escaped and not is_in_quotes and not is_in_double_quotes:
                 file_name = "".join([arg for arg in args[idx:].strip() if arg != '"'])

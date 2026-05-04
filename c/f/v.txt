@@ -1,5 +1,0 @@
-f.txt
-o.txt
-p.txt
-r.txt
-t.txt
