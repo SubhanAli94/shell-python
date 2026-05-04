@@ -122,8 +122,8 @@ def main():
                         write_output_to_file(op_file_name, output)
                     elif err_file_name:
                         write_output_to_file(err_file_name, output)
-                elif output != None:
-                    print(output)
+                    else:
+                        print(output)
             case 'echo':
                 if op_file_name:
                     write_output_to_file(op_file_name, args)
