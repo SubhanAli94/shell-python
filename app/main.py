@@ -166,8 +166,10 @@ def main():
                         
                         if op_file_name:
                             write_output_to_file(op_file_name, '', file_mode)
+                            print(stripped_err)
                         else:
                             print(stripped_err)
+                        
 
                     if stripped_op:
                         if op_file_name:
