@@ -31,6 +31,7 @@ def parse_args(args):
             idx = idx + 2
             if not is_escaped and not is_in_quotes and not is_in_double_quotes: 
                 err_file_name = "".join([arg for arg in args[idx:].strip() if arg != '"'])
+                write_output_to_file(err_file_name, "")
                 return output, None, err_file_name
 
         if char == '1' and idx + 1 < len(args) and args[idx + 1] == ">":
