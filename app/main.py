@@ -95,6 +95,7 @@ def main():
             write_op_idx = parsed_input[1:].index('>')
             parsed_input = parsed_input[:write_op_idx+1]
 
+        print(parsed_input)
         argl = parsed_input[1:]
         args = " ".join(parsed_input[1:])
 
