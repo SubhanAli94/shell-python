@@ -118,25 +118,16 @@ def main():
             case 'type':
                 output = process_type_command(args) 
                 if output != None:
-                    if op_file_name:
-                        write_output_to_file(op_file_name, output)
-                    elif err_file_name:
-                        write_output_to_file(err_file_name, output)
-                    else:
-                        print(output)
+                    file_name = op_file_name or err_file_name
+                    write_output_to_file(file_name, output) if file_name else print(output)
+                    
             case 'echo':
-                if op_file_name:
-                    write_output_to_file(op_file_name, args)
-                else:
-                    print(args)
+                write_output_to_file(op_file_name, args) if op_file_name else print(args)
+                    
             case 'pwd':
                 output = os.getcwd()
-                if op_file_name:
-                    write_output_to_file(op_file_name, output)
-                elif err_file_name:
-                    write_output_to_file(err_file_name, output)
-                else:
-                    print(output)
+                file_name = op_file_name or err_file_name
+                write_output_to_file(file_name, output) if file_name else print(output)
             case 'cd':
                 process_cd_command(args)  
             case _:
@@ -149,8 +140,6 @@ def main():
                     for file_name, output in [(op_file_name, p.stdout), (err_file_name, p.stderr)]:
                         if output and (stripped := output.strip()):
                             write_output_to_file(file_name, stripped) if file_name else print(stripped)
-        
-        op_file_name = ""
                     
     pass
 
