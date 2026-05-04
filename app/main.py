@@ -130,11 +130,12 @@ def main():
                 if command_path:
                     p = subprocess.run([command] + argl, capture_output=True, text=True)
                     # cat /tmp/baz/blueberry nonexistent 1> /tmp/foo/quz.md
-                
-                    print(p.stderr.strip())
+
+                    if p.stderr.strip():
+                        print(p.stderr.strip())
                     
                     if file_name and p.stdout.strip():
-                        write_output_to_file(file_name, p.stdout)
+                        write_output_to_file(file_name, p.stdout.strip())
                     else:
                         print(p.stdout.strip())
 
