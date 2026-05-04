@@ -64,10 +64,6 @@ def process_type_command(args):
             else:
                 print(f"{arg}: not found")
 
-def process_echo_command(arg):
-    output = parse_args(arg)
-    print(*output)
-
 def process_cd_command(arg):
     try:
         if arg == "~":
@@ -84,21 +80,22 @@ def main():
             
         parsed_input = parse_args(user_input)
         command = parsed_input[0]
-        args = " ".join(parsed_input[1:])
         argl = parsed_input[1:]
+        args = " ".join(parsed_input[1:])
         match command:
             case 'exit':
                 break
             case 'type':
                 process_type_command(args) 
             case 'echo':
-                process_echo_command(args)
+                print(args)
             case 'pwd':
                 print(os.getcwd())
             case 'cd':
                 process_cd_command(args)  
             case _:
                 command_path = iterate_paths(command)
+                
                 if command_path:
                     subprocess.run([command] + argl)
                 else:
