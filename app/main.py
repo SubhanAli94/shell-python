@@ -126,8 +126,6 @@ def main():
             case 'echo':
                 if op_file_name:
                     write_output_to_file(op_file_name, args)
-                elif err_file_name:
-                    write_output_to_file(err_file_name, args)
                 else:
                     print(args)
             case 'pwd':
