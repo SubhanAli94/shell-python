@@ -104,8 +104,6 @@ def main():
         argl = parsed_input[1:]
         args = " ".join(parsed_input[1:])
 
-        print(f"Command: {command}")
-        print(f"Args: {args}")
         match command:
             case 'exit':
                 break
