@@ -96,12 +96,12 @@ def main():
             case 'cd':
                 process_cd_command(args)  
             case _:
-                if "'" or '"' in command:
-                    command = parse_args(command)
                 
-                print(command)
-                args = parse_args(args)
+                parsed_input = parse_args(user_input)
+                command = parsed_input[0]
+                args = parsed_input[1:]
                 command_path = iterate_paths(command)
+                
                 if command_path:
                     subprocess.run([command] + args)
                 else:
