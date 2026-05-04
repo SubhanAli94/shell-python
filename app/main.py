@@ -107,6 +107,7 @@ def main():
                     print(output)
             case 'echo':
                 if file_name:
+                    print(args)
                     write_output_to_file(file_name, args)
                 else:
                     print(args)
@@ -127,6 +128,7 @@ def main():
                     if p.stderr:
                         print(p.stderr)
                     elif file_name:
+                        print(args)
                         write_output_to_file(file_name, p.stdout)
                     else:
                         print(p.stdout)
