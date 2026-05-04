@@ -147,8 +147,8 @@ def main():
                     p = subprocess.run([command] + argl, capture_output=True, text=True)
                     
                     for output, file_name in [(op_file_name, p.stdout), (err_file_name, p.stderr)]:
-                        if stripped := output.strip():
-                            write_output_to_file(file_name, stripped) if file_name else print(output)
+                        if stripped := (output or "").strip():
+                            write_output_to_file(file_name, stripped) if file_name else print(stripped)
         
         op_file_name = ""
                     
