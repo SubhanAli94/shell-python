@@ -141,25 +141,14 @@ def main():
                 process_cd_command(args)  
             case _:
                 command_path = iterate_paths(command)
-                if command_path:
-                    p = subprocess.run([command] + argl, capture_output=True, text=True)
-                    # cat /tmp/baz/blueberry nonexistent 1> /tmp/foo/quz.md
-                    
-                    stripped_err = p.stderr.strip()
-                    stripped_op = p.stdout.strip()
-                    if stripped_err:
-                        if err_file_name:
-                            write_output_to_file(err_file_name, stripped_err)
-                        else:
-                            print(stripped_err)
-
-                    if stripped_op:
-                        if op_file_name and stripped_op:
-                            write_output_to_file(op_file_name, stripped_op)
-                        else:
-                            print(stripped_op)
-                else:
+                if not command_path:
                     print(f"{user_input}: command not found")
+                else:  
+                    p = subprocess.run([command] + argl, capture_output=True, text=True)
+                    
+                    for output, file_name in [(op_file_name, p.stdout), (err_file_name, p.stderr)]:
+                        if stripped := output.strip():
+                            write_output_to_file(file_name, stripped) if file_name else print(output)
         
         op_file_name = ""
                     
