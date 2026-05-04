@@ -82,8 +82,12 @@ def main():
         sys.stdout.write("$ ")
         user_input = input()
             
-        command, *args = user_input.split(" ", 1)
-        args = "".join(args)
+        parsed_input = parse_args(user_input)
+        command = parsed_input[0]
+        args = " ".join(parsed_input[1:])
+        argl = parsed_input[1:]
+        print(args, 'args')
+        print(argl, 'argl')
         match command:
             case 'exit':
                 break
@@ -96,14 +100,9 @@ def main():
             case 'cd':
                 process_cd_command(args)  
             case _:
-                
-                parsed_input = parse_args(user_input)
-                command = parsed_input[0]
-                args = parsed_input[1:]
                 command_path = iterate_paths(command)
-                
                 if command_path:
-                    subprocess.run([command] + args)
+                    subprocess.run([command] + argl)
                 else:
                     print(f"{user_input}: command not found")
 
