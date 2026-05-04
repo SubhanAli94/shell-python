@@ -24,7 +24,13 @@ def parse_args(args):
     output = []
     curr = ""
     is_escaped = False
-    for char in args:
+    file_name = ""
+    for idx, char in enumerate(args):
+        if (char == '>' or (char == '1' and args[idx + 1] == ">")) and not is_escaped and not is_in_quotes and not is_in_double_quotes:
+            file_name = args[idx+1:].strip()
+            if curr: output.append(curr)
+            return output, file_name
+
         if char == '\\' and not is_escaped and not is_in_quotes:
             is_escaped = not is_escaped
             continue
@@ -50,7 +56,7 @@ def parse_args(args):
 
     output.append(curr)
 
-    return output
+    return output, file_name
 
 def process_type_command(args):
     args = args.split()
@@ -81,21 +87,12 @@ def write_output_to_file(file_name, output):
 def main():
     
     while True:
-        is_output_write_required = True
 
         sys.stdout.write("$ ")
         user_input = input()
             
-        parsed_input = parse_args(user_input)
+        parsed_input, file_name = parse_args(user_input)
         command = parsed_input[0]
-        file_name = ''
-        if '>' in parsed_input:
-            is_output_write_required = True
-            file_name = parsed_input[-1]
-            write_op_idx = parsed_input[1:].index('>')
-            parsed_input = parsed_input[:write_op_idx+1]
-
-        print(parsed_input)
         argl = parsed_input[1:]
         args = " ".join(parsed_input[1:])
 
@@ -104,16 +101,18 @@ def main():
                 break
             case 'type':
                 output = process_type_command(args) 
-                if output != None:
+                if output != None and file_name:
                     write_output_to_file(file_name, output)
+                elif output != None:
+                    print(output)
             case 'echo':
-                if(is_output_write_required):
+                if file_name:
                     write_output_to_file(file_name, args)
                 else:
                     print(args)
             case 'pwd':
                 output = os.getcwd()
-                if(is_output_write_required):
+                if file_name:
                     write_output_to_file(file_name, output)
                 else:
                     print(output)
@@ -127,8 +126,10 @@ def main():
                     
                     if p.stderr:
                         print(p.stderr)
-                    else:
+                    elif file_name:
                         write_output_to_file(file_name, p.stdout)
+                    else:
+                        print(p.stdout)
                 else:
                     print(f"{user_input}: command not found")
                     
