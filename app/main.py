@@ -88,8 +88,8 @@ def main():
     
     while True:
 
-        print("----------her---------")
         sys.stdout.write("$ ")
+        print("----------her---------")
         user_input = input()
             
         parsed_input, file_name = parse_args(user_input)
