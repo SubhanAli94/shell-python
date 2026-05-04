@@ -30,14 +30,12 @@ def parse_args(args):
             idx = idx + 2
             if not is_escaped and not is_in_quotes and not is_in_double_quotes:
                 file_name = "".join([arg for arg in args[idx:].strip() if arg != '"'])
-                # print(f"file name: {file_name}")
                 if curr: output.append(curr)
                 return output, file_name
         elif char == ">":
             idx = idx + 1
             if not is_escaped and not is_in_quotes and not is_in_double_quotes:
                 file_name = "".join([arg for arg in args[idx:].strip() if arg != '"'])
-                # print(f"file name: {file_name}")
                 if curr: output.append(curr)
                 return output, file_name
 
@@ -130,15 +128,15 @@ def main():
                 command_path = iterate_paths(command)
                 if command_path:
                     p = subprocess.run([command] + argl, capture_output=True, text=True)
-                    # cat /tmp/baz/blueberry nonexistent 1> /tmp/foo/quz.md
 
-                    if p.stderr.strip():
-                        print(p.stderr.strip())
+                    err = p.stderr.strip()
+                    if err: print(err)
                     
-                    if file_name and p.stdout.strip():
-                        write_output_to_file(file_name, p.stdout.strip())
+                    stdout = p.stdout.strip()
+                    if file_name and stdout:
+                        write_output_to_file(file_name, stdout)
                     else:
-                        print(p.stdout.strip())
+                        print(stdout)
 
                 else:
                     print(f"{user_input}: command not found")
