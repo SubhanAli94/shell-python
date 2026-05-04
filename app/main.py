@@ -89,9 +89,8 @@ def main():
     while True:
 
         sys.stdout.write("$ ")
-        print("----------her---------")
         user_input = input()
-            
+        print("----------her---------")
         parsed_input, file_name = parse_args(user_input)
         command = parsed_input[0]
         argl = parsed_input[1:]
