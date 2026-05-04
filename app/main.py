@@ -39,14 +39,14 @@ def parse_args(args):
                 file_name = "".join([arg for arg in args[idx:].strip() if arg != '"'])
                 # print(f"file name: {file_name}")
                 if curr: output.append(curr)
-                return output, file_name
+                return output, file_name, None
         elif char == ">":
             idx = idx + 1
             if not is_escaped and not is_in_quotes and not is_in_double_quotes:
                 file_name = "".join([arg for arg in args[idx:].strip() if arg != '"'])
                 # print(f"file name: {file_name}")
                 if curr: output.append(curr)
-                return output, file_name
+                return output, file_name, None
 
         if char == '\\' and not is_escaped and not is_in_quotes:
             is_escaped = not is_escaped
@@ -73,7 +73,7 @@ def parse_args(args):
 
     output.append(curr)
 
-    return output, file_name
+    return output, file_name, None
 
 def process_type_command(args):
     args = args.split()
@@ -106,7 +106,7 @@ def main():
     while True:
         sys.stdout.write("$ ")
         user_input = input()
-        parsed_input, op_file_name, err_file_name = parse_args(user_input)
+        parsed_input, op_file_name, err_file_name = parse_args(user_input.strip())
         command = parsed_input[0]
         argl = parsed_input[1:]
         args = " ".join(parsed_input[1:])
@@ -153,7 +153,7 @@ def main():
                             write_output_to_file(err_file_name, stripped_err)
                         else:
                             print(stripped_err)
-                            
+
                     if stripped_op:
                         if op_file_name and stripped_op:
                             write_output_to_file(op_file_name, stripped_op)
