@@ -129,14 +129,14 @@ def main():
                 if command_path:
                     p = subprocess.run([command] + argl, capture_output=True, text=True)
 
-                    err = p.stderr.strip()
-                    if err: print(err)
+    
+                    if p.stderr.strip() :
+                        print(p.stderr.strip())
                     
-                    stdout = p.stdout.strip()
-                    if file_name and stdout:
-                        write_output_to_file(file_name, stdout)
+                    if file_name and p.stdout.strip():
+                        write_output_to_file(file_name, p.stdout.strip())
                     else:
-                        print(stdout)
+                        print(p.stdout.strip())
 
                 else:
                     print(f"{user_input}: command not found")
