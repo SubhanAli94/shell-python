@@ -42,8 +42,7 @@ def parse_args(args):
                 return output, o_file_name, None, 'a'
 
 
-
-        if char == '2' and idx+2 < len(args) and args[idx +1] == ">" and args[idx +2] == ">":
+        if char == '2' and idx+2 < len(args) and args[idx+1] == ">" and args[idx+2] == ">":
             idx = idx + 3
             if not is_escaped and not is_in_quotes and not is_in_double_quotes: 
                 err_file_name = "".join([arg for arg in args[idx:].strip() if arg != '"'])
@@ -160,8 +159,8 @@ def main():
                     p = subprocess.run([command] + argl, capture_output=True, text=True)
                     
                     for file_name, output in [(op_file_name, p.stdout), (err_file_name, p.stderr)]:
-                        if output and (stripped := output.strip()):
-                            write_output_to_file(file_name, stripped, file_mode) if file_name else print(stripped)
+                        if file_name:
+                            write_output_to_file(file_name, output.strip(), file_mode) if file_name else print(output.strip())
                     
     pass
 
