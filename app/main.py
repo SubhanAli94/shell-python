@@ -82,12 +82,15 @@ def main():
         command = parsed_input[0]
         argl = parsed_input[1:]
         args = " ".join(parsed_input[1:])
+
+        output = ""
         match command:
             case 'exit':
                 break
             case 'type':
                 process_type_command(args) 
             case 'echo':
+                output = args
                 print(args)
             case 'pwd':
                 print(os.getcwd())
@@ -100,7 +103,13 @@ def main():
                     subprocess.run([command] + argl)
                 else:
                     print(f"{user_input}: command not found")
-
+        
+        if ">" in argl[-2]:
+            filename = argl[-1]
+            if filename:
+                with open(filename, 'w') as file:
+                    file.write(output)
+                    
     pass
 
 if __name__ == "__main__":
