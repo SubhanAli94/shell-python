@@ -159,8 +159,10 @@ def main():
                     p = subprocess.run([command] + argl, capture_output=True, text=True)
                     
                     for file_name, output in [(op_file_name, p.stdout), (err_file_name, p.stderr)]:
-                        if file_name:
-                            write_output_to_file(file_name, output.strip(), file_mode) if file_name else print(output.strip())
+                        if not file_name:
+                            print(output.strip())
+                        else:
+                            write_output_to_file(file_name, output.strip(), file_mode)
                     
     pass
 
