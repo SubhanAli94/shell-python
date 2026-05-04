@@ -128,7 +128,6 @@ def main():
                     if p.stderr:
                         print(p.stderr)
                     elif file_name:
-                        print(args)
                         write_output_to_file(file_name, p.stdout)
                     else:
                         print(p.stdout)
