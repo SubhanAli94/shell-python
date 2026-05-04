@@ -163,11 +163,14 @@ def main():
                     if stripped_err:
                         if err_file_name:
                             write_output_to_file(err_file_name, stripped_err, file_mode)
+                        
+                        if op_file_name:
+                            write_output_to_file(op_file_name, '', file_mode)
                         else:
                             print(stripped_err)
 
                     if stripped_op:
-                        if op_file_name and stripped_op:
+                        if op_file_name:
                             write_output_to_file(op_file_name, stripped_op, file_mode)
                         else:
                             print(stripped_op)
