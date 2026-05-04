@@ -88,6 +88,7 @@ def main():
     
     while True:
 
+        print("----------her---------")
         sys.stdout.write("$ ")
         user_input = input()
             
@@ -130,7 +131,6 @@ def main():
                         write_output_to_file(file_name, p.stdout)
                     else:
                         print(p.stdout)
-                        sys.stdout.write("$ ")
 
                 else:
                     print(f"{user_input}: command not found")
