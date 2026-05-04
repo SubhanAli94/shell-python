@@ -116,8 +116,7 @@ def main():
             case 'exit':
                 break
             case 'type':
-                output = process_type_command(args) 
-                if output != None:
+                if (output := process_type_command(args)) is not None:
                     file_name = op_file_name or err_file_name
                     write_output_to_file(file_name, output) if file_name else print(output)
                     
