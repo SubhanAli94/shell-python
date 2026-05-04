@@ -164,7 +164,7 @@ def main():
                         if err_file_name:
                             write_output_to_file(err_file_name, stripped_err, file_mode)
                         
-                        if op_file_name:
+                        elif op_file_name:
                             write_output_to_file(op_file_name, '', file_mode)
                             print(stripped_err)
                         else:
