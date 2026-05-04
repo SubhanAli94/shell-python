@@ -34,7 +34,7 @@ def parse_args(args):
                 if curr: output.append(curr)
                 return output, o_file_name, None, 'a'
         
-        if char == '>' and idx+1 < len(args) and args[idx+1] ==">":
+        elif char == '>' and idx+1 < len(args) and args[idx+1] ==">":
             idx = idx + 2
             if not is_escaped and not is_in_quotes and not is_in_double_quotes: 
                 o_file_name = "".join([arg for arg in args[idx:].strip() if arg != '"'])
