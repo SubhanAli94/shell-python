@@ -87,10 +87,8 @@ def write_output_to_file(file_name, output):
 def main():
     
     while True:
-
         sys.stdout.write("$ ")
         user_input = input()
-        print("----------her---------")
         parsed_input, file_name = parse_args(user_input)
         command = parsed_input[0]
         argl = parsed_input[1:]
@@ -133,6 +131,8 @@ def main():
 
                 else:
                     print(f"{user_input}: command not found")
+        
+        file_name = ""
                     
     pass
 
