@@ -138,7 +138,6 @@ def main():
     
     readline.set_completer(auto_complete)
     readline.parse_and_bind('bind ^I rl_complete')
-    readline.completion_append_character = ' '
 
     while True:
         user_input = input("$ ")
