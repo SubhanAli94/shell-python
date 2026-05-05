@@ -6,6 +6,15 @@ import readline
 BUILT_INS = ['echo', 'exit', 'type', 'pwd']
 matches = []
 
+# extract last word
+# check if curr dir contain any file that starts with last word
+# if any then pass it to matches
+
+def get_file_matches(text):
+    last_word = text.rsplit(maxsplit=1)[-1]
+    all_files = os.listdir('.')
+    return [fn for fn in all_files if fn.startswith(last_word)]
+
 def auto_complete(text, state):
     global matches
 
@@ -13,7 +22,7 @@ def auto_complete(text, state):
         matches = (
             [bi for bi in BUILT_INS if bi.startswith(text)] or 
             [os.path.basename(ex) for ex in find_executable_paths(text)]
-            )
+            ) if len(text.split()) == 1 else get_file_matches(text)
         if not matches:
             print('\x07')
             return None
