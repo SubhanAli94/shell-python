@@ -12,7 +12,7 @@ def auto_complete(text, state):
         matches = [bi for bi in BUILT_INS if bi.startswith(text)]
 
     if state < len(matches):
-        return f"{matches[state]} "
+        return matches[state]
     else:
         return None
     
@@ -138,6 +138,8 @@ def main():
     
     readline.set_completer(auto_complete)
     readline.parse_and_bind('bind ^I rl_complete')
+    readline.set_completer_delimiters(' \t\n')
+    readline.completion_append_character = ' '
 
     while True:
         user_input = input("$ ")
