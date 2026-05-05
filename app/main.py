@@ -11,9 +11,9 @@ def auto_complete(text, state):
     if state == 0:
         matches = [bi for bi in BUILT_INS if bi.startswith(text)]
 
-    if state < len(matches):
+    try:
         return f"{matches[state]} "
-    else:
+    except:
         return None
     
 
