@@ -3,7 +3,7 @@ import sys
 import subprocess
 import readline
 
-BUILT_INS = ['echo', 'exit', 'type', 'pwd', 'pwooo', 'echoooo']
+BUILT_INS = ['echo', 'exit', 'type', 'pwd']
 matches = []
 all_paths = []
 
