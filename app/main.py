@@ -41,7 +41,7 @@ def find_executable_paths(arg, tab_completion = True):
 
         #if paths for tab completion is required
         elif tab_completion:
-            all_files = [os.path.join(path, af) for af in all_files if af.startswith(arg)]
+            all_files = [os.path.join(path, af) for af in all_files if af.startswith(arg) and is_executable_v2(os.path.join(path, af))]
 
         all_paths.extend(all_files)
     return all_paths
