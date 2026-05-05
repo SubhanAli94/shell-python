@@ -8,12 +8,12 @@ matches = []
 
 def auto_complete(text, state):
     global matches
-        
+
     if state == 0:
         matches = [bi for bi in BUILT_INS if bi.startswith(text)]
         if not matches: 
             matches = find_executable_paths(text)
-            matches = [ex.split('/')[-1] for ex in matches]
+            matches = [os.path.basename(ex) for ex in matches]
             if not matches:
                 print('\x07')
                 return None
