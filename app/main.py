@@ -3,7 +3,7 @@ import sys
 import subprocess
 import readline
 
-BUILT_INS = ['echo', 'exit', 'type', 'pwd']
+BUILT_INS = ['echo', 'exit', 'type', 'pwd', 'pwooo', 'echoooo']
 matches = []
 all_paths = []
 
@@ -13,7 +13,8 @@ def auto_complete(text, state):
     if state == 0:
         matches = [bi for bi in BUILT_INS if bi.startswith(text)]
         if not matches:
-            matches = [ex for ex in all_paths if ex.split('/')[-1]]
+            all_paths = find_executable_paths(text)
+            matches = [ex.split('/')[-1] for ex in all_paths]
             if not matches:
                 print('\x07')
                 return None
@@ -36,14 +37,13 @@ def find_executable_paths(arg, tab_completion = True):
 
         #if exact file names are requires
         if not tab_completion:
-            all_files = [os.path.join(path, af) for af in all_files if af == arg]
+            all_files = [os.path.join(path, af) for af in all_files if af == arg and is_executable_v2(os.path.join(path, af))]
 
         #if paths for tab completion is required
         elif tab_completion:
             all_files = [os.path.join(path, af) for af in all_files if af.startswith(arg)]
 
         all_paths.extend(all_files)
-    
     return all_paths
 
 # current: usr/bin/ls is it is file and has permission then return
@@ -55,13 +55,15 @@ def find_executable_paths(arg, tab_completion = True):
 # then return resul_list[state]'s last word
 # otherwise none
 
+def is_executable_v2(file_path):
+    return os.path.isfile(file_path) and os.access(file_path, os.X_OK)
 
-def is_executable(command):
+def process_executable_request(command):
     file_paths = find_executable_paths(command, tab_completion=False)
-    for path in file_paths:
-        if os.path.isfile(path) and os.access(path, os.X_OK): 
-            return path
-    else: None
+    try:
+        return file_paths[0]
+    except:
+        None
 
 def parse_args(args):
     is_in_quotes = False
@@ -147,7 +149,7 @@ def process_type_command(args):
         if arg in BUILT_INS:
             return f"{arg} is a shell builtin"
         else:
-            file_path = is_executable(arg)
+            file_path = process_executable_request(arg)
             if file_path:
                 return f"{arg} is {file_path}"
             else:
@@ -203,7 +205,7 @@ def main():
             case 'cd':
                 process_cd_command(args)  
             case _:
-                command_path = is_executable(command)
+                command_path = process_executable_request(command)
                 if not command_path:
                     print(f"{user_input}: command not found")
                 else:  
