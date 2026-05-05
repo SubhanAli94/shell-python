@@ -9,6 +9,7 @@ all_paths = []
 
 def auto_complete(text, state):
     global matches
+    global all_paths
     
     if state == 0:
         matches = [bi for bi in BUILT_INS if bi.startswith(text)]
@@ -27,7 +28,7 @@ def auto_complete(text, state):
 
 def find_executable_paths(arg, tab_completion = True):
     path_list = os.environ['PATH'].split(os.pathsep)
-    global all_paths
+    all_paths = []
 
     for path in path_list:
         try:
