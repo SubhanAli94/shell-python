@@ -138,7 +138,7 @@ def main():
     
     readline.set_completer(auto_complete)
     readline.parse_and_bind('bind ^I rl_complete')
-    readline.set_completer_delimiters(' \t\n')
+    readline.set_completer_delims(' \t\n')
     readline.completion_append_character = ' '
 
     while True:
