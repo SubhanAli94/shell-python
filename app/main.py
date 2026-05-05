@@ -5,17 +5,15 @@ import readline
 
 BUILT_INS = ['echo', 'exit', 'type', 'pwd']
 matches = []
-all_paths = []
 
 def auto_complete(text, state):
     global matches
-    global all_paths
-    
+        
     if state == 0:
         matches = [bi for bi in BUILT_INS if bi.startswith(text)]
-        if not matches:
-            all_paths = find_executable_paths(text)
-            matches = [ex.split('/')[-1] for ex in all_paths]
+        if not matches: 
+            matches = find_executable_paths(text)
+            matches = [ex.split('/')[-1] for ex in matches]
             if not matches:
                 print('\x07')
                 return None
