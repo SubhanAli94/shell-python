@@ -10,19 +10,26 @@ matches = []
 # check if curr dir contain any file that starts with last word
 # if any then pass it to matches
 
-def get_file_matches(text):
+def get_file_matches(text, dir_path = '.'):
     last_word = text.rsplit(maxsplit=1)[-1]
-    all_files = os.listdir('.')
+    all_files = os.listdir(dir_path)
     return [fn for fn in all_files if fn.startswith(last_word)]
+
+# if "/" in readline.get_line_buffer() then take text to look for
+# and take readline.get_line_buffer() until last "/" and pass it as dir to get_file_matches
+# os.path.join(os.path.dirname(readline.get_line_buffer().split(" ")[1]), "")
 
 def auto_complete(text, state):
     global matches
-
     if state == 0:
-        matches = (
-            [bi for bi in BUILT_INS if bi.startswith(text)] or 
-            [os.path.basename(ex) for ex in find_executable_paths(text)]
-            ) if len(readline.get_line_buffer().split()) == 1 else get_file_matches(text)
+        line = readline.get_line_buffer()
+        if len(line.split()) == 1:
+            matches = [bi for bi in BUILT_INS if bi.startswith(text)] or \
+                [os.path.basename(ex) for ex in find_executable_paths(text)]
+        elif "/" in line:
+            dir_path = os.path.join(os.path.dirname(readline.get_line_buffer().split(" ")[1]), "")
+            matches = get_file_matches(text, dir_path)
+        else: matches = get_file_matches(text)
 
         if not matches:
             print('\x07')
