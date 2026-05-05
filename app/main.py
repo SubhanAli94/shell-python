@@ -6,18 +6,9 @@ import readline
 BUILT_INS = ['echo', 'exit', 'type', 'pwd']
 matches = []
 
-# extract last word
-# check if curr dir contain any file that starts with last word
-# if any then pass it to matches
-
 def get_file_matches(text, dir_path = '.'):
-    last_word = text.rsplit(maxsplit=1)[-1]
     all_files = os.listdir(dir_path)
-    return [fn for fn in all_files if fn.startswith(last_word)]
-
-# if "/" in readline.get_line_buffer() then take text to look for
-# and take readline.get_line_buffer() until last "/" and pass it as dir to get_file_matches
-# os.path.join(os.path.dirname(readline.get_line_buffer().split(" ")[1]), "")
+    return [fn for fn in all_files if fn.startswith(text)]
 
 def auto_complete(text, state):
     global matches
