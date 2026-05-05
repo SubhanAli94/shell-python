@@ -47,15 +47,6 @@ def find_executable_paths(arg, tab_completion = True):
         all_paths.extend(all_files)
     return all_paths
 
-# current: usr/bin/ls is it is file and has permission then return
-# desired: list all files inside the usr/bin, 
-# if list has command then check if it is valid path and has exec permission
-
-# if it is tab completion 
-# Itierate acroos all paths and maintain a global list of all paths where path's last word starts with 'input_string'
-# then return resul_list[state]'s last word
-# otherwise none
-
 def is_executable_v2(file_path):
     return os.path.isfile(file_path) and os.access(file_path, os.X_OK)
 
