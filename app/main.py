@@ -22,7 +22,8 @@ def auto_complete(text, state):
         matches = (
             [bi for bi in BUILT_INS if bi.startswith(text)] or 
             [os.path.basename(ex) for ex in find_executable_paths(text)]
-            ) if len(text.split()) == 1 else get_file_matches(text)
+            ) if len(readline.get_line_buffer().split()) == 1 else get_file_matches(text)
+
         if not matches:
             print('\x07')
             return None
