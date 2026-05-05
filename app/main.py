@@ -12,7 +12,7 @@ def auto_complete(text, state):
         matches = [bi for bi in BUILT_INS if bi.startswith(text)]
 
     if state < len(matches):
-        return matches[state]
+        return f"{matches[state]} "
     else:
         return None
     
