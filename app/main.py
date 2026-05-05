@@ -5,14 +5,18 @@ import readline
 
 BUILT_INS = ['echo', 'exit', 'type', 'pwd']
 matches = []
+all_paths = []
+
 def auto_complete(text, state):
     global matches
     
     if state == 0:
         matches = [bi for bi in BUILT_INS if bi.startswith(text)]
         if not matches:
-            print('\x07')
-            return None
+            matches = [ex for ex in all_paths if ex.split('/')[-1]]
+            if not matches:
+                print('\x07')
+                return None
 
     try:
         return f"{matches[state]} "
@@ -20,16 +24,44 @@ def auto_complete(text, state):
         return None
     
 
-def iterate_paths(command):
+def find_executable_paths(arg, tab_completion = True):
     path_list = os.environ['PATH'].split(os.pathsep)
-    for path in path_list:
-        file_path = os.path.join(path, command)
-        if is_executable(file_path):
-            return file_path
-    return None
+    global all_paths
 
-def is_executable(file_path):
-    return os.path.isfile(file_path) and os.access(file_path, os.X_OK)
+    for path in path_list:
+        try:
+            all_files = os.listdir(path)
+        except:
+            continue
+
+        #if exact file names are requires
+        if not tab_completion:
+            all_files = [os.path.join(path, af) for af in all_files if af == arg]
+
+        #if paths for tab completion is required
+        elif tab_completion:
+            all_files = [os.path.join(path, af) for af in all_files if af.startswith(arg)]
+
+        all_paths.extend(all_files)
+    
+    return all_paths
+
+# current: usr/bin/ls is it is file and has permission then return
+# desired: list all files inside the usr/bin, 
+# if list has command then check if it is valid path and has exec permission
+
+# if it is tab completion 
+# Itierate acroos all paths and maintain a global list of all paths where path's last word starts with 'input_string'
+# then return resul_list[state]'s last word
+# otherwise none
+
+
+def is_executable(command):
+    file_paths = find_executable_paths(command, tab_completion=False)
+    for path in file_paths:
+        if os.path.isfile(path) and os.access(path, os.X_OK): 
+            return path
+    else: None
 
 def parse_args(args):
     is_in_quotes = False
@@ -115,7 +147,7 @@ def process_type_command(args):
         if arg in BUILT_INS:
             return f"{arg} is a shell builtin"
         else:
-            file_path = iterate_paths(arg)
+            file_path = is_executable(arg)
             if file_path:
                 return f"{arg} is {file_path}"
             else:
@@ -171,7 +203,7 @@ def main():
             case 'cd':
                 process_cd_command(args)  
             case _:
-                command_path = iterate_paths(command)
+                command_path = is_executable(command)
                 if not command_path:
                     print(f"{user_input}: command not found")
                 else:  
