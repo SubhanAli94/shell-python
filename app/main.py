@@ -1,11 +1,21 @@
 import os
 import sys
 import subprocess
+import readline
 
+BUILT_INS = ['echo', 'exit', 'type', 'pwd']
+matches = []
+def auto_complete(text, state):
+    global matches
+    
+    if state == 0:
+        matches = [bi for bi in BUILT_INS if bi.startswith(text)]
 
-def is_builtin(command):
-    builtins = ['echo', 'exit', 'type', 'pwd']
-    return command in builtins
+    if state < len(matches):
+        return matches[state]
+    else:
+        return None
+    
 
 def iterate_paths(command):
     path_list = os.environ['PATH'].split(os.pathsep)
@@ -99,7 +109,7 @@ def parse_args(args):
 def process_type_command(args):
     args = args.split()
     for arg in args:
-        if is_builtin(arg):
+        if arg in BUILT_INS:
             return f"{arg} is a shell builtin"
         else:
             file_path = iterate_paths(arg)
@@ -126,9 +136,12 @@ def write_output_to_file(file_name, output, file_mode = 'w'):
 
 def main():
     
+    readline.set_completer(auto_complete)
+    readline.parse_and_bind('bind ^I rl_complete')
+    
     while True:
-        sys.stdout.write("$ ")
-        user_input = input()
+        user_input = input("$ ")
+        
         parsed_input, op_file_name, err_file_name, file_mode = parse_args(user_input.strip())
         command = parsed_input[0]
         argl = parsed_input[1:]
