@@ -12,7 +12,7 @@ def auto_complete(text, state):
         matches = [bi for bi in BUILT_INS if bi.startswith(text)]
 
     if state < len(matches):
-        return matches[state]
+        return f"{matches[state]} "
     else:
         return None
     
@@ -137,10 +137,11 @@ def write_output_to_file(file_name, output, file_mode = 'w'):
 def main():
     
     readline.set_completer(auto_complete)
-    readline.parse_and_bind('bind ^I rl_complete')
-    readline.set_completer_delims(' \t\n')
-    readline.completion_append_character = ' '
-
+    if 'libedit' in readline.__doc__:
+        readline.parse_and_bind('bind ^I rl_complete')
+    else:
+        readline.parse_and_bind('tab: complete')
+    
     while True:
         user_input = input("$ ")
         
