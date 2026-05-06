@@ -22,10 +22,13 @@ def find_longest_common_prefix(arr: List[str]):
 
 def get_file_or_dir_matches(text = '', dir_path = '.'):
     res = [fn for fn in os.listdir(dir_path) if fn.startswith(text)]
-    #if there are multiple dirs with same pre-fix 
-    # for example xyz_foo, xyz_foo_bar, xyz_foo_bar_baz have the LCP xyz_foo
+    
     dirs = [dir for dir in res if os.path.isdir(os.path.join(dir_path, dir))]
     files = [file for file in res if os.path.isfile(os.path.join(dir_path, file))]
+
+    lcp = find_longest_common_prefix(res)
+
+    if text == lcp: return ""
 
     if len(dirs) == 1 and not files:
         return [f"{dirs[0]}{os.sep}"]
@@ -34,7 +37,7 @@ def get_file_or_dir_matches(text = '', dir_path = '.'):
         return [f"{files[0]} "]
     
     res = dirs + files
-    lcp = find_longest_common_prefix(res)
+    
     if lcp: return [lcp]
     else:
         dirs = [f"{dir}{os.sep}" for dir in dirs]
