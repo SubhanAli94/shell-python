@@ -10,19 +10,19 @@ def get_file_matches(text = '', dir_path = '.'):
 
 def get_dir_matches(dir_path = '.'):
     dir = [dir + os.sep for dir in os.listdir(dir_path) if os.path.isdir(os.path.join(dir_path, dir))]
-    return [dir[0] if len(dir) > 0 else []]
+    return dir[0] if len(dir) > 0 else None
 
 def auto_complete(text, state):
     global matches
     if state == 0:
         line = readline.get_line_buffer()
         if line[-1] == " " or line[-1] == os.sep:
-            path = os.path.dirname(line.split()[-1]) if line[-1] != " " else '.'
-            matches = get_dir_matches(path)
-
-            if not matches:
-                matches = get_file_matches(text)[0]
-                matches = f"{matches[0]} " if len(matches) > 0 else []
+            path = os.path.dirname(line.split()[-1]) if line[-1] == os.sep else '.'
+            res = get_dir_matches(path)
+            if res: matches = [res]
+            else:
+                matches = get_file_matches('')
+                matches = [matches[0]] if len(matches) > 0 else []
         elif len(line.split()) == 1:
             matches = [bi for bi in BUILT_INS if bi.startswith(text)] or \
                 [os.path.basename(ex) for ex in find_executable_paths(text)]
