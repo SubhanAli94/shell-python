@@ -19,6 +19,10 @@ def auto_complete(text, state):
         if line[-1] == " " or line[-1] == os.sep:
             path = os.path.dirname(line.split()[-1]) if line[-1] != " " else '.'
             matches = get_dir_matches(path)
+
+            if not matches:
+                matches = get_file_matches(text)[0]
+                matches = matches[0] if len(matches) > 0 else []
         elif len(line.split()) == 1:
             matches = [bi for bi in BUILT_INS if bi.startswith(text)] or \
                 [os.path.basename(ex) for ex in find_executable_paths(text)]
