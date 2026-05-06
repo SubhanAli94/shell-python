@@ -23,17 +23,22 @@ def get_file_or_dir_matches(text = '', dir_path = '.'):
     res = [fn for fn in os.listdir(dir_path) if fn.startswith(text)]
     #if there are multiple dirs with same pre-fix 
     # for example xyz_foo, xyz_foo_bar, xyz_foo_bar_baz have the LCP xyz_foo
-
-    dirs = [f"{dir}{os.sep}" for dir in res if os.path.isdir(os.path.join(dir_path, dir))]
-    files = [f"{file} " for file in res if os.path.isfile(os.path.join(dir_path, file))]
+    dirs = [dir for dir in res if os.path.isdir(os.path.join(dir_path, dir))]
+    files = [file for file in res if os.path.isfile(os.path.join(dir_path, file))]
 
     if len(dirs) == 1 and not files:
-        return [dirs[0]]
+        return [f"{dirs[0]}{os.sep}"]
     
     if len(files) == 1 and not dirs:
-        return [files[0]]
+        return [f"{files[0]} "]
     
-    return dirs + files
+    res = dirs + files
+    lcp = find_longest_common_prefix(res)
+    if lcp: return
+    else:
+        dirs = [f"{dir}{os.sep}" for dir in dirs]
+        files = [f"{file} " for file in files]    
+        return dirs + files
 
 def auto_complete(text, state):
     global matches
