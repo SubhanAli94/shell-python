@@ -5,28 +5,33 @@ import readline
 BUILT_INS = ['echo', 'exit', 'type', 'pwd']
 matches = []
 
-def get_file_matches(text = '', dir_path = '.'):
-    return [f"{fn} " for fn in os.listdir(dir_path) if fn.startswith(text)]
+def get_file_or_dir_matches(text = '', dir_path = '.'):
+    res = [fn for fn in os.listdir(dir_path) if fn.startswith(text)]
+    dirs = [f"{dir}{os.sep}" for dir in res if os.path.isdir(os.path.join(dir_path, dir))]
+    if dirs: return [dirs[0]]
+
+    files = [f"{file} " for file in res if os.path.isfile(os.path.join(dir_path, file))]
+    return files
 
 def get_dir_matches(dir_path = '.'):
-    dir = [dir + os.sep for dir in os.listdir(dir_path) if os.path.isdir(os.path.join(dir_path, dir))]
-    return dir[0] if len(dir) > 0 else None
+    lsdir = os.listdir(dir_path)
+    p = os.path.join(dir_path, lsdir[0])
+    return [p + os.sep]
 
 def auto_complete(text, state):
     global matches
     if state == 0:
         line = readline.get_line_buffer()
-        if line[-1] == " " or line[-1] == os.sep:
-            path = os.path.dirname(line.split()[-1]) if line[-1] == os.sep else '.'
-            res = get_dir_matches(path)
-            if res: matches = [res]
+        
+        if len(line.split()) == 1:
+            if text:
+                matches = [f"{bi} " for bi in BUILT_INS if bi.startswith(text)] or \
+                    [f"{os.path.basename(ex)} " for ex in find_executable_paths(text)]
             else:
-                matches = get_file_matches('')
-                matches = [matches[0]] if len(matches) > 0 else []
-        elif len(line.split()) == 1:
-            matches = [bi for bi in BUILT_INS if bi.startswith(text)] or \
-                [os.path.basename(ex) for ex in find_executable_paths(text)]
-        else: matches = get_file_matches(text)
+                matches = get_dir_matches()
+        elif len(line.split()) > 1:
+            p = os.path.dirname(line.split()[-1]) if "/" in line.split()[-1] else '.'
+            matches = get_file_or_dir_matches(text, p)
 
         if not matches:
             print('\x07')
@@ -35,6 +40,7 @@ def auto_complete(text, state):
     try:
         return matches[state]
     except IndexError:
+        matches = []
         return None
     
 
