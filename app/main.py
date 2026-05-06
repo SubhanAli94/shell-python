@@ -7,10 +7,12 @@ BUILT_INS = ['echo', 'exit', 'type', 'pwd']
 matches = []
 
 def find_longest_common_prefix(arr: List[str]):
-    if not arr: return ""
+    if not arr : return ""
+    if len(arr) == 1: return arr[0]
+
     first_word = arr[0]
 
-    for idx, char in enumerate(arr):
+    for idx, char in enumerate(first_word):
         for item in arr:
             if idx >= len(item) or item[idx] != char:
                 return first_word[:idx]
