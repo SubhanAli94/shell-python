@@ -17,6 +17,7 @@ def find_longest_common_prefix(arr: List[str]):
             if idx >= len(item) or item[idx] != char:
                 return first_word[:idx]
     
+    
     return first_word
 
 def get_file_or_dir_matches(text = '', dir_path = '.'):
@@ -34,7 +35,7 @@ def get_file_or_dir_matches(text = '', dir_path = '.'):
     
     res = dirs + files
     lcp = find_longest_common_prefix(res)
-    if lcp: return
+    if lcp: return [lcp]
     else:
         dirs = [f"{dir}{os.sep}" for dir in dirs]
         files = [f"{file} " for file in files]    
