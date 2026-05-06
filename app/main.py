@@ -7,16 +7,12 @@ matches = []
 
 def get_file_or_dir_matches(text = '', dir_path = '.'):
     res = [fn for fn in os.listdir(dir_path) if fn.startswith(text)]
+    
     dirs = [f"{dir}{os.sep}" for dir in res if os.path.isdir(os.path.join(dir_path, dir))]
     if dirs: return [dirs[0]]
-
+    
     files = [f"{file} " for file in res if os.path.isfile(os.path.join(dir_path, file))]
     return files
-
-def get_dir_matches(dir_path = '.'):
-    lsdir = os.listdir(dir_path)
-    p = os.path.join(dir_path, lsdir[0])
-    return [p + os.sep]
 
 def auto_complete(text, state):
     global matches
@@ -28,7 +24,7 @@ def auto_complete(text, state):
                 matches = [f"{bi} " for bi in BUILT_INS if bi.startswith(text)] or \
                     [f"{os.path.basename(ex)} " for ex in find_executable_paths(text)]
             else:
-                matches = get_dir_matches()
+                matches = get_file_or_dir_matches()
         elif len(line.split()) > 1:
             p = os.path.dirname(line.split()[-1]) if "/" in line.split()[-1] else '.'
             matches = get_file_or_dir_matches(text, p)
