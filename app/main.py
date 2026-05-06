@@ -1,12 +1,27 @@
 import os
 import subprocess
 import readline
+from typing import List
 
 BUILT_INS = ['echo', 'exit', 'type', 'pwd']
 matches = []
 
+def find_longest_common_prefix(arr: List[str]):
+    if not arr: return ""
+    first_word = arr[0]
+
+    for idx, char in enumerate(arr):
+        for item in arr:
+            if idx >= len(item) or item[idx] != char:
+                return first_word[:idx]
+    
+    return first_word
+
 def get_file_or_dir_matches(text = '', dir_path = '.'):
     res = [fn for fn in os.listdir(dir_path) if fn.startswith(text)]
+    #if there are multiple dirs with same pre-fix 
+    # for example xyz_foo, xyz_foo_bar, xyz_foo_bar_baz have the LCP xyz_foo
+
     dirs = [f"{dir}{os.sep}" for dir in res if os.path.isdir(os.path.join(dir_path, dir))]
     files = [f"{file} " for file in res if os.path.isfile(os.path.join(dir_path, file))]
 
