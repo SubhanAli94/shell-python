@@ -5,20 +5,23 @@ import readline
 BUILT_INS = ['echo', 'exit', 'type', 'pwd']
 matches = []
 
-def get_file_matches(text, dir_path = '.'):
-    all_files = os.listdir(dir_path)
-    return [fn for fn in all_files if fn.startswith(text)]
+def get_file_matches(text = '', dir_path = '.'):
+    return [f"{fn} " for fn in os.listdir(dir_path) if fn.startswith(text)]
+
+def get_dir_matches(dir_path = '.'):
+    dir = [dir + os.sep for dir in os.listdir(dir_path) if os.path.isdir(os.path.join(dir_path, dir))]
+    return [dir[0] if len(dir) > 0 else []]
 
 def auto_complete(text, state):
     global matches
     if state == 0:
         line = readline.get_line_buffer()
-        if len(line.split()) == 1:
+        if line[-1] == " " or line[-1] == os.sep:
+            path = os.path.dirname(line.split()[-1]) if line[-1] != " " else '.'
+            matches = get_dir_matches(path)
+        elif len(line.split()) == 1:
             matches = [bi for bi in BUILT_INS if bi.startswith(text)] or \
                 [os.path.basename(ex) for ex in find_executable_paths(text)]
-        elif "/" in line:
-            dir_path = os.path.join(os.path.dirname(readline.get_line_buffer().split(" ")[1]), "")
-            matches = get_file_matches(text, dir_path)
         else: matches = get_file_matches(text)
 
         if not matches:
@@ -26,7 +29,7 @@ def auto_complete(text, state):
             return None
 
     try:
-        return f"{matches[state]} "
+        return matches[state]
     except IndexError:
         return None
     
