@@ -22,7 +22,7 @@ def auto_complete(text, state):
 
             if not matches:
                 matches = get_file_matches(text)[0]
-                matches = matches[0] if len(matches) > 0 else []
+                matches = f"{matches[0]} " if len(matches) > 0 else []
         elif len(line.split()) == 1:
             matches = [bi for bi in BUILT_INS if bi.startswith(text)] or \
                 [os.path.basename(ex) for ex in find_executable_paths(text)]
