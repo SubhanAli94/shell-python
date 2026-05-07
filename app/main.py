@@ -5,6 +5,7 @@ from typing import List
 
 BUILT_INS = ['echo', 'exit', 'type', 'pwd']
 matches = []
+lcp = ""
 
 def find_longest_common_prefix(arr: List[str]):
     if not arr : return ""
@@ -21,14 +22,12 @@ def find_longest_common_prefix(arr: List[str]):
     return first_word
 
 def get_file_or_dir_matches(text = '', dir_path = '.'):
+    global lcp
+
     res = [fn for fn in os.listdir(dir_path) if fn.startswith(text)]
     
     dirs = [dir for dir in res if os.path.isdir(os.path.join(dir_path, dir))]
     files = [file for file in res if os.path.isfile(os.path.join(dir_path, file))]
-
-    lcp = find_longest_common_prefix(res)
-
-    if text == lcp: return []
 
     if len(dirs) == 1 and not files:
         return [f"{dirs[0]}{os.sep}"]
@@ -36,18 +35,22 @@ def get_file_or_dir_matches(text = '', dir_path = '.'):
     if len(files) == 1 and not dirs:
         return [f"{files[0]} "]
     
-    res = dirs + files
-    if lcp: return [lcp]
-    else:
-        dirs = [f"{dir}{os.sep}" for dir in dirs]
-        files = [f"{file} " for file in files]    
-        return dirs + files
+    # if not lcp:
+    #     print(f"here:  {lcp}")
+    #     lcp = find_longest_common_prefix(res)
+    #     if lcp: return [lcp]
+
+    dirs = [f"{dir}{os.sep}" for dir in dirs]
+    files = [f"{file} " for file in files]    
+    return dirs + files
 
 def auto_complete(text, state):
     global matches
+    global lcp
 
     if state == 0:
         line = readline.get_line_buffer() 
+
         if len(line.split()) == 1:
             if text:
                 matches = [f"{bi} " for bi in BUILT_INS if bi.startswith(text)] or \
