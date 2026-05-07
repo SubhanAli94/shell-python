@@ -106,7 +106,8 @@ def auto_complete(text, state):
                 args.append(ll[1])
                 try:
                     op = subprocess.run(args, capture_output=True, text=True, env=env)
-                    matches = [f"{op.stdout.strip()} "]
+                    if op.stdout.strip():
+                        matches = [f"{op.stdout.strip()} "]
                 except Exception as e:
                     print(f"error: {type(e).__name__}: {e}")
             else:
