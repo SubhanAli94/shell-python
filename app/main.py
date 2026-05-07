@@ -67,6 +67,14 @@ def get_file_or_dir_matches(text = '', dir_path = '.'):
     files = [f"{file} " for file in files]    
     return dirs + files
 
+def get_env_for_completion(input_line):
+    byte_len = len(input_line.encode('utf-8'))
+    env = os.environ.copy()
+    env["COMP_LINE"] = input_line
+    env["COMP_POINT"] = byte_len
+
+    return env
+
 def auto_complete(text, state):
     global matches
     global lcp
@@ -87,19 +95,19 @@ def auto_complete(text, state):
                     matches = get_file_or_dir_matches()
         elif len(ll) > 1:
             if is_registred_completer(ll[0]):
-                if len(ll) == 3:
-                    args = []
-                    args.append(completions.get(ll[0]))
-                    args.append(ll[0])
-                    args.append(ll[2])
-                    args.append(ll[1])
-                    try:
-                        op = subprocess.run(args, capture_output=True, text=True)
-                        matches = [f"{op.stdout.strip()} "]
-                    except FileNotFoundError:
-                        print(f"command not found: {cmd}")
-                    except PermissionError:
-                        print(f"permission denied: {cmd}")
+                env = get_env_for_completion(line)
+                args = []
+                args.append(completions.get(ll[0]))
+                args.append(ll[0])
+                args.append(ll[2] if len(ll) > 2 else "")
+                args.append(ll[1])
+                try:
+                    op = subprocess.run(args, capture_output=True, text=True, env=env)
+                    matches = [f"{op.stdout.strip()} "]
+                except FileNotFoundError:
+                    print(f"command not found: {cmd}")
+                except PermissionError:
+                    print(f"permission denied: {cmd}")
             else:
                 p = os.path.dirname(line.split()[-1]) if "/" in line.split()[-1] else '.'
                 matches = get_file_or_dir_matches(text, p)
