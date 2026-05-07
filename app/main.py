@@ -90,6 +90,7 @@ def auto_complete(text, state):
                 if len(ll) == 3:
                     args = []
                     args.append(completions.get(ll[0]))
+                    args.append(ll[0])
                     args.append(ll[2])
                     args.append(ll[1])
                     try:
