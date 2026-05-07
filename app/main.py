@@ -94,7 +94,7 @@ def auto_complete(text, state):
                     args.append(ll[1])
                     try:
                         op = subprocess.run(args, capture_output=True, text=True)
-                        matches = [f"{ll[0]} {ll[1]} {op.stdout.strip()} "]
+                        matches = [f"{op.stdout.strip()} "]
                     except FileNotFoundError:
                         print(f"command not found: {cmd}")
                     except PermissionError:
