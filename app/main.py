@@ -232,7 +232,10 @@ def main():
                 if (output := process_type_command(args)) is not None:
                     file_name = op_file_name or err_file_name
                     write_output_to_file(file_name, output, file_mode) if file_name else print(output)
-                    
+            case 'complete':
+                if(len(argl) == 2 and argl[0] == '-p'):
+                    print(f"complete: {argl[-1]}: no completion specification")
+
             case 'echo':
                 write_output_to_file(op_file_name, args, file_mode) if op_file_name else print(args)
                     
