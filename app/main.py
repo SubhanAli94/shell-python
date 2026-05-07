@@ -87,6 +87,7 @@ def auto_complete(text, state):
                 cmd = completions.get(ll[0])
                 op = subprocess.run([cmd], capture_output=True, text=True)
                 matches = [f"{op.stdout.strip()} "]
+                print(f"matches---: {matches}")
             else:
                 if text:
                     matches = [f"{bi} " for bi in BUILT_INS if bi.startswith(text)] or \
