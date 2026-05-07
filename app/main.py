@@ -71,7 +71,7 @@ def get_env_for_completion(input_line):
     byte_len = len(input_line.encode('utf-8'))
     env = os.environ.copy()
     env["COMP_LINE"] = input_line
-    env["COMP_POINT"] = byte_len
+    env["COMP_POINT"] = f"{byte_len}"
 
     return env
 
