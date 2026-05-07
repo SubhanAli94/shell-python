@@ -3,7 +3,7 @@ import subprocess
 import readline
 from typing import List
 
-BUILT_INS = ['echo', 'exit', 'type', 'pwd']
+BUILT_INS = ['echo', 'exit', 'type', 'pwd', 'complete']
 matches = []
 lcp = ""
 
