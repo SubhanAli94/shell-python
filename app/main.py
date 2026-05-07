@@ -57,11 +57,10 @@ def auto_complete(text, state):
         elif len(line.split()) > 1:
             p = os.path.dirname(line.split()[-1]) if "/" in line.split()[-1] else '.'
             matches = get_file_or_dir_matches(text, p)
-            print(f"Matches res: {matches}")
-            
+
         if not matches:
-            print('\x07')
-            return None     
+            print('\x07', end='')
+            return None
 
     try:
         return matches[state]
