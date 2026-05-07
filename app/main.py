@@ -1,6 +1,7 @@
 import os
 import subprocess
 import readline
+import sys
 from typing import List, Dict
 
 BUILT_INS = ['echo', 'exit', 'type', 'pwd', 'complete']
@@ -85,10 +86,10 @@ def auto_complete(text, state):
         if len(ll) == 1:
             if completions.get(ll[0]):
                 cmd = completions.get(ll[0])
-                print(f"cmd---: {cmd}")
+                print(f"cmd---: {cmd}", file=sys.stdout)
                 op = subprocess.run([cmd], capture_output=True, text=True)
                 matches = [f"{op.stdout.strip()} "]
-                print(f"matches---: {matches}")
+                print(f"matches---: {matches}", file=sys.stdout)
             else:
                 if text:
                     matches = [f"{bi} " for bi in BUILT_INS if bi.startswith(text)] or \
