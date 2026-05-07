@@ -8,6 +8,10 @@ matches = []
 lcp = ""
 completions : Dict[str, str] = {}
 
+def is_registred_completer(command):
+    global completions
+    return completions.get(command) != None
+
 def process_complete_command(args, argl):
     global completions
 
@@ -15,8 +19,11 @@ def process_complete_command(args, argl):
         if not completions:
             print(f"complete: {argl[-1]}: no completion specification")
         else: 
-            completion = completions.get(argl[1])
-            print(f"complete -C '{completion}' {argl[1]}")
+            if is_registred_completer(argl[1]):
+                completion = completions.get(argl[1])
+                print(f"complete -C '{completion}' {argl[1]}")
+            else:
+                print(f"complete: {argl[-1]}: no completion specification")
     
     if(len(argl) == 3 and argl[0] == "-C"):
         if not completions.get(argl[2]):
