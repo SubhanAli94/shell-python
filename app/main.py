@@ -85,9 +85,19 @@ def auto_complete(text, state):
                         [f"{os.path.basename(ex)} " for ex in find_executable_paths(text)]
                 else:
                     matches = get_file_or_dir_matches()
-        elif len(line.split()) > 1:
-            p = os.path.dirname(line.split()[-1]) if "/" in line.split()[-1] else '.'
-            matches = get_file_or_dir_matches(text, p)
+        elif len(ll) > 1:
+            if is_registred_completer(ll[0]):
+                if len(ll) == 3:
+                    args = []
+                    args.append(ll[0])
+                    args.append(ll[2])
+                    args.append(ll[1])
+
+                    op = subprocess.run(args, capture_output=True, text=True)
+                    matches = [op.stdout.strip()]
+            else:
+                p = os.path.dirname(line.split()[-1]) if "/" in line.split()[-1] else '.'
+                matches = get_file_or_dir_matches(text, p)
 
         if not matches: 
             print('\x07', end='')
