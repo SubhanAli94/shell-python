@@ -28,7 +28,7 @@ def get_file_or_dir_matches(text = '', dir_path = '.'):
 
     lcp = find_longest_common_prefix(res)
 
-    if text == lcp: return ""
+    if text == lcp: return []
 
     if len(dirs) == 1 and not files:
         return [f"{dirs[0]}{os.sep}"]
@@ -37,7 +37,6 @@ def get_file_or_dir_matches(text = '', dir_path = '.'):
         return [f"{files[0]} "]
     
     res = dirs + files
-    
     if lcp: return [lcp]
     else:
         dirs = [f"{dir}{os.sep}" for dir in dirs]
@@ -46,9 +45,9 @@ def get_file_or_dir_matches(text = '', dir_path = '.'):
 
 def auto_complete(text, state):
     global matches
+
     if state == 0:
-        line = readline.get_line_buffer()
-        
+        line = readline.get_line_buffer() 
         if len(line.split()) == 1:
             if text:
                 matches = [f"{bi} " for bi in BUILT_INS if bi.startswith(text)] or \
@@ -61,7 +60,7 @@ def auto_complete(text, state):
 
         if not matches:
             print('\x07')
-            return None
+            return None     
 
     try:
         return matches[state]
