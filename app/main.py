@@ -89,7 +89,7 @@ def auto_complete(text, state):
             if is_registred_completer(ll[0]):
                 if len(ll) == 3:
                     args = []
-                    args.append(ll[0])
+                    args.append(completions.get(ll[0]))
                     args.append(ll[2])
                     args.append(ll[1])
                     try:
