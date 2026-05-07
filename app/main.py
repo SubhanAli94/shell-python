@@ -92,9 +92,13 @@ def auto_complete(text, state):
                     args.append(ll[0])
                     args.append(ll[2])
                     args.append(ll[1])
-
-                    op = subprocess.run(args, capture_output=True, text=True)
-                    matches = [op.stdout.strip()]
+                    try:
+                        op = subprocess.run(args, capture_output=True, text=True)
+                        matches = [f"{ll[0]} {ll[1]} {op.stdout.strip()} "]
+                    except FileNotFoundError:
+                        print(f"command not found: {cmd}")
+                    except PermissionError:
+                        print(f"permission denied: {cmd}")
             else:
                 p = os.path.dirname(line.split()[-1]) if "/" in line.split()[-1] else '.'
                 matches = get_file_or_dir_matches(text, p)
