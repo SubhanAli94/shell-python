@@ -95,24 +95,17 @@ def auto_complete(text, state):
                     matches = get_file_or_dir_matches()
         elif len(ll) > 1:
             if is_registred_completer(ll[0]):
-                # env = get_env_for_completion(line)
-                env = {}
-                byte_len = len(line.encode('utf-8'))
-                env = os.environ.copy()
-                env["COMP_LINE"] = line
-                env["COMP_POINT"] = byte_len
+                env = get_env_for_completion(line)
                 args = []
                 args.append(completions.get(ll[0]))
                 args.append(ll[0])
                 args.append(ll[2] if len(ll) > 2 else "")
                 args.append(ll[1])
                 try:
-                    op = subprocess.run(args, capture_output=True, text=True)
+                    op = subprocess.run(args, capture_output=True, text=True, env=env)
                     matches = [f"{op.stdout.strip()} "]
-                except FileNotFoundError:
-                    print(f"command not found: {cmd}")
-                except PermissionError:
-                    print(f"permission denied: {cmd}")
+                except Exception as e:
+                    print(f"error: {type(e).__name__}: {e}")
             else:
                 p = os.path.dirname(line.split()[-1]) if "/" in line.split()[-1] else '.'
                 matches = get_file_or_dir_matches(text, p)
