@@ -239,51 +239,58 @@ def main():
         argl = parsed_input[1:]
         args = " ".join(parsed_input[1:])
 
-        match command:
-            case 'exit':
-                break
-            case 'type':
-                if (output := process_type_command(args)) is not None:
+        # if command is in completions then execute completion otherwise continue with rest of the logic
+        if completions.get(command):
+            # execute this command in a subprocess and print the output followed by a space
+            cmd = completions.get(command)
+            op = subprocess.run([cmd], capture_output=True, text=True)
+            print(f"{op.stdout}", end='')
+        else:
+            match command:
+                case 'exit':
+                    break
+                case 'type':
+                    if (output := process_type_command(args)) is not None:
+                        file_name = op_file_name or err_file_name
+                        write_output_to_file(file_name, output, file_mode) if file_name else print(output)
+                case 'complete':
+                    process_complete_command(args, argl)
+
+                case 'echo':
+                    write_output_to_file(op_file_name, args, file_mode) if op_file_name else print(args)
+                        
+                case 'pwd':
+                    output = os.getcwd()
                     file_name = op_file_name or err_file_name
                     write_output_to_file(file_name, output, file_mode) if file_name else print(output)
-            case 'complete':
-                process_complete_command(args, argl)
-
-            case 'echo':
-                write_output_to_file(op_file_name, args, file_mode) if op_file_name else print(args)
-                    
-            case 'pwd':
-                output = os.getcwd()
-                file_name = op_file_name or err_file_name
-                write_output_to_file(file_name, output, file_mode) if file_name else print(output)
-            case 'cd':
-                process_cd_command(args)  
-            case _:
-                command_path = process_executable_request(command)
-                if not command_path:
-                    print(f"{user_input}: command not found")
-                else:  
-                    p = subprocess.run([command] + argl, capture_output=True, text=True)
-                    
-                    stripped_err = p.stderr.strip()
-                    stripped_op = p.stdout.strip()
-                    if stripped_err:
-                        if err_file_name:
-                            write_output_to_file(err_file_name, stripped_err, file_mode)
+                case 'cd':
+                    process_cd_command(args)  
+                case _:
+                    command_path = process_executable_request(command)
+                    if not command_path:
+                        print(f"{user_input}: command not found")
+                    else:  
+                        p = subprocess.run([command] + argl, capture_output=True, text=True)
                         
-                        elif op_file_name:
-                            write_output_to_file(op_file_name, '', file_mode)
-                            print(stripped_err)
-                        else:
-                            print(stripped_err)
-                        
+                        stripped_err = p.stderr.strip()
+                        stripped_op = p.stdout.strip()
+                        if stripped_err:
+                            if err_file_name:
+                                write_output_to_file(err_file_name, stripped_err, file_mode)
+                            
+                            elif op_file_name:
+                                write_output_to_file(op_file_name, '', file_mode)
+                                print(stripped_err)
+                            else:
+                                print(stripped_err)
+                            
 
-                    if stripped_op:
-                        if op_file_name:
-                            write_output_to_file(op_file_name, stripped_op, file_mode)
-                        else:
-                            print(stripped_op)
-                    
+                        if stripped_op:
+                            if op_file_name:
+                                write_output_to_file(op_file_name, stripped_op, file_mode)
+                            else:
+                                print(stripped_op)
+                        
     pass
 
 if __name__ == "__main__":
