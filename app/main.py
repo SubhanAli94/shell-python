@@ -85,6 +85,7 @@ def auto_complete(text, state):
         if len(ll) == 1:
             if completions.get(ll[0]):
                 cmd = completions.get(ll[0])
+                print(f"cmd---: {cmd}")
                 op = subprocess.run([cmd], capture_output=True, text=True)
                 matches = [f"{op.stdout.strip()} "]
                 print(f"matches---: {matches}")
