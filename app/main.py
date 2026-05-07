@@ -66,13 +66,18 @@ def auto_complete(text, state):
 
     if state == 0:
         line = readline.get_line_buffer() 
-
-        if len(line.split()) == 1:
-            if text:
-                matches = [f"{bi} " for bi in BUILT_INS if bi.startswith(text)] or \
-                    [f"{os.path.basename(ex)} " for ex in find_executable_paths(text)]
+        ll = line.split()
+        if len(ll) == 1:
+            if completions.get(ll[0]):
+                cmd = completions.get(ll[0])
+                op = subprocess.run([cmd], capture_output=True, text=True)
+                matches = [op.stdout]
             else:
-                matches = get_file_or_dir_matches()
+                if text:
+                    matches = [f"{bi} " for bi in BUILT_INS if bi.startswith(text)] or \
+                        [f"{os.path.basename(ex)} " for ex in find_executable_paths(text)]
+                else:
+                    matches = get_file_or_dir_matches()
         elif len(line.split()) > 1:
             p = os.path.dirname(line.split()[-1]) if "/" in line.split()[-1] else '.'
             matches = get_file_or_dir_matches(text, p)
@@ -239,58 +244,51 @@ def main():
         argl = parsed_input[1:]
         args = " ".join(parsed_input[1:])
 
-        # if command is in completions then execute completion otherwise continue with rest of the logic
-        if completions.get(command):
-            # execute this command in a subprocess and print the output followed by a space
-            cmd = completions.get(command)
-            op = subprocess.run([cmd], capture_output=True, text=True)
-            print(f"{op.stdout}", end='')
-        else:
-            match command:
-                case 'exit':
-                    break
-                case 'type':
-                    if (output := process_type_command(args)) is not None:
-                        file_name = op_file_name or err_file_name
-                        write_output_to_file(file_name, output, file_mode) if file_name else print(output)
-                case 'complete':
-                    process_complete_command(args, argl)
-
-                case 'echo':
-                    write_output_to_file(op_file_name, args, file_mode) if op_file_name else print(args)
-                        
-                case 'pwd':
-                    output = os.getcwd()
+        match command:
+            case 'exit':
+                break
+            case 'type':
+                if (output := process_type_command(args)) is not None:
                     file_name = op_file_name or err_file_name
                     write_output_to_file(file_name, output, file_mode) if file_name else print(output)
-                case 'cd':
-                    process_cd_command(args)  
-                case _:
-                    command_path = process_executable_request(command)
-                    if not command_path:
-                        print(f"{user_input}: command not found")
-                    else:  
-                        p = subprocess.run([command] + argl, capture_output=True, text=True)
-                        
-                        stripped_err = p.stderr.strip()
-                        stripped_op = p.stdout.strip()
-                        if stripped_err:
-                            if err_file_name:
-                                write_output_to_file(err_file_name, stripped_err, file_mode)
-                            
-                            elif op_file_name:
-                                write_output_to_file(op_file_name, '', file_mode)
-                                print(stripped_err)
-                            else:
-                                print(stripped_err)
-                            
+            case 'complete':
+                process_complete_command(args, argl)
 
-                        if stripped_op:
-                            if op_file_name:
-                                write_output_to_file(op_file_name, stripped_op, file_mode)
-                            else:
-                                print(stripped_op)
+            case 'echo':
+                write_output_to_file(op_file_name, args, file_mode) if op_file_name else print(args)
+                    
+            case 'pwd':
+                output = os.getcwd()
+                file_name = op_file_name or err_file_name
+                write_output_to_file(file_name, output, file_mode) if file_name else print(output)
+            case 'cd':
+                process_cd_command(args)  
+            case _:
+                command_path = process_executable_request(command)
+                if not command_path:
+                    print(f"{user_input}: command not found")
+                else:  
+                    p = subprocess.run([command] + argl, capture_output=True, text=True)
+                    
+                    stripped_err = p.stderr.strip()
+                    stripped_op = p.stdout.strip()
+                    if stripped_err:
+                        if err_file_name:
+                            write_output_to_file(err_file_name, stripped_err, file_mode)
                         
+                        elif op_file_name:
+                            write_output_to_file(op_file_name, '', file_mode)
+                            print(stripped_err)
+                        else:
+                            print(stripped_err)
+                        
+
+                    if stripped_op:
+                        if op_file_name:
+                            write_output_to_file(op_file_name, stripped_op, file_mode)
+                        else:
+                            print(stripped_op)
+                    
     pass
 
 if __name__ == "__main__":
