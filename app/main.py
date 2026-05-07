@@ -95,7 +95,12 @@ def auto_complete(text, state):
                     matches = get_file_or_dir_matches()
         elif len(ll) > 1:
             if is_registred_completer(ll[0]):
-                env = get_env_for_completion(line)
+                # env = get_env_for_completion(line)
+                env = {}
+                byte_len = len(line.encode('utf-8'))
+                env = os.environ.copy()
+                env["COMP_LINE"] = line
+                env["COMP_POINT"] = byte_len
                 args = []
                 args.append(completions.get(ll[0]))
                 args.append(ll[0])
