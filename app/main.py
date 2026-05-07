@@ -2,11 +2,13 @@ import os
 import subprocess
 import readline
 from typing import List
+from complete_command import process_complete_command
 
 BUILT_INS = ['echo', 'exit', 'type', 'pwd', 'complete']
 matches = []
 lcp = ""
 
+#Not used anywhere
 def find_longest_common_prefix(arr: List[str]):
     if not arr : return ""
     if len(arr) == 1: return arr[0]
@@ -70,8 +72,7 @@ def auto_complete(text, state):
     except IndexError:
         matches = []
         return None
-    
-
+  
 def find_executable_paths(arg, tab_completion = True):
     path_list = os.environ['PATH'].split(os.pathsep)
     all_paths = []
@@ -207,8 +208,7 @@ def write_output_to_file(file_name, output, file_mode = 'w'):
     with open(file_name, file_mode) as file:
         output += '\n' if output else ''
         file.write(output)
-
-
+        
 def main():
     
     readline.set_completer(auto_complete)
@@ -233,8 +233,7 @@ def main():
                     file_name = op_file_name or err_file_name
                     write_output_to_file(file_name, output, file_mode) if file_name else print(output)
             case 'complete':
-                if(len(argl) == 2 and argl[0] == '-p'):
-                    print(f"complete: {argl[-1]}: no completion specification")
+                process_complete_command(args, argl)
 
             case 'echo':
                 write_output_to_file(op_file_name, args, file_mode) if op_file_name else print(args)
