@@ -20,6 +20,12 @@ completions : Dict[str, str] = {}
 jobs = [Job]
 
 def process_jobs_command(args, argl):
+    global jobs
+
+    job = jobs[0] if len(jobs) > 0 else None
+    if job:
+        print(f"{[job.job_no]}+  {job.status:<24}{job.cmd}")
+
     return None
 
 def is_registred_completer(command):
