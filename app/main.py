@@ -17,7 +17,7 @@ BUILT_INS = ['echo', 'exit', 'type', 'pwd', 'complete', 'jobs']
 matches = []
 lcp = ""
 completions : Dict[str, str] = {}
-jobs = [Job]
+jobs: List[Job] = []
 
 def process_jobs_command(args, argl):
     global jobs
@@ -306,11 +306,6 @@ def main():
     global jobs
 
     while True:
-        # remove last element if it is &
-        # continue with remaining list of args and argl
-        # Run the remaining commanf in BG
-        # print incremental bg_idx (1, 2, 3, ...) and process id
-        # show prompt
         user_input = input("$ ")
         
         parsed_input, op_file_name, err_file_name, file_mode = parse_args(user_input.strip())
