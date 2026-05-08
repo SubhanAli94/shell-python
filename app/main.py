@@ -46,6 +46,22 @@ def process_jobs_command(args, argl):
     
     return None
 
+def reap_bg_jobs():
+    global jobs
+
+    to_remove = []
+    for idx, job in enumerate(jobs):
+        cmd = job.cmd
+
+        if job.process.poll() != None:
+            status = "Done"
+            cmd =  job.cmd[:-1]
+            to_remove.append(idx)
+            print(f"{[job.job_no]}Done  {status:<24}{cmd}")
+    
+    for idx in reversed(to_remove):
+        jobs.pop(idx)
+
 def is_registred_completer(command):
     global completions
     return completions.get(command) != None
@@ -324,6 +340,7 @@ def main():
     global jobs
 
     while True:
+        reap_bg_jobs()
         user_input = input("$ ")
         
         parsed_input, op_file_name, err_file_name, file_mode = parse_args(user_input.strip())
