@@ -3,11 +3,22 @@ import subprocess
 import readline
 import sys
 from typing import List, Dict
+from dataclasses import dataclass
+
+@dataclass
+class Job:
+    job_no: int
+    pid: int
+    cmd: str
+    status: str
+
 
 BUILT_INS = ['echo', 'exit', 'type', 'pwd', 'complete', 'jobs']
 matches = []
 lcp = ""
 completions : Dict[str, str] = {}
+jobs = [Job]
+
 job_id = 0
 
 def process_jobs_command(args, argl):
