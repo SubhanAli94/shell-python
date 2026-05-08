@@ -22,7 +22,7 @@ jobs: List[Job] = []
 def process_jobs_command(args, argl):
     global jobs
 
-    markers = {0:'+', 1:'1'}
+    markers = {0:'+', 1:'-'}
     for idx, job in enumerate(reversed(jobs)):
         marker = markers.get(idx, ' ')
         print(f"{[job.job_no]}{marker}  {job.status:<24}{job.cmd}")
