@@ -57,7 +57,7 @@ def reap_bg_jobs():
             status = "Done"
             cmd =  job.cmd[:-1]
             to_remove.append(idx)
-            print(f"{[job.job_no]}  {status:<24}{cmd}")
+            print(f"{[job.job_no]}+  {status:<24}{cmd}")
     
     for idx in reversed(to_remove):
         jobs.pop(idx)
