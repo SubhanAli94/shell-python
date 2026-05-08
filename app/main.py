@@ -19,6 +19,7 @@ matches = []
 lcp = ""
 completions : Dict[str, str] = {}
 jobs: List[Job] = []
+next_job_no = 0
 
 def process_jobs_command(args, argl):
     global jobs
@@ -48,6 +49,7 @@ def process_jobs_command(args, argl):
 
 def reap_bg_jobs():
     global jobs
+    global next_job_no
 
     to_remove = []
     for idx, job in enumerate(jobs):
@@ -61,6 +63,7 @@ def reap_bg_jobs():
     
     for idx in reversed(to_remove):
         jobs.pop(idx)
+        if idx == 0: next_job_no = idx
 
 def is_registred_completer(command):
     global completions
@@ -338,6 +341,7 @@ def main():
         readline.parse_and_bind('tab: complete')
     
     global jobs
+    global next_job_no
 
     while True:
         reap_bg_jobs()
@@ -379,7 +383,9 @@ def main():
                 else:  
                     if is_bg:
                         process = subprocess.Popen([command] + argl)
-                        job_no = jobs[-1].job_no+1 if len(jobs) > 0 else 1
+
+                        job_no = next_job_no+1
+                        
                         job = Job(job_no, process.pid, user_input, "Running", process)
                         jobs.append(job)
                         print(f"{[job_no]} {process.pid}")
