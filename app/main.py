@@ -26,6 +26,9 @@ def process_complete_command(args, argl):
             else:
                 print(f"complete: {argl[-1]}: no completion specification")
     
+    if(len(argl) == 2 and argl[0] == "-r"):
+        completions.pop(argl[1], None)
+
     if(len(argl) == 3 and argl[0] == "-C"):
         if not completions.get(argl[2]):
             completions[argl[2]] = argl[1] # e.g. (git, <PATH>)
