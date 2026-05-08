@@ -384,11 +384,11 @@ def main():
                     if is_bg:
                         process = subprocess.Popen([command] + argl)
 
-                        job_no = next_job_no+1
+                        next_job_no = next_job_no+1
                         
-                        job = Job(job_no, process.pid, user_input, "Running", process)
+                        job = Job(next_job_no, process.pid, user_input, "Running", process)
                         jobs.append(job)
-                        print(f"{[job_no]} {process.pid}")
+                        print(f"{[next_job_no]} {process.pid}")
                     else:
                         p = subprocess.run([command] + argl, capture_output=True, text=True)
                         
