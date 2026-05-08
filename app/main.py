@@ -41,7 +41,7 @@ def process_jobs_command(args, argl):
             to_remove.append(idx)
         print(f"{[job.job_no]}{marker}  {status:<24}{cmd}")
 
-    for idx in to_remove:
+    for idx in reversed(to_remove):
         jobs.pop(idx)
     
     return None
