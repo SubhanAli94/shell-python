@@ -4,7 +4,7 @@ import readline
 import sys
 from typing import List, Dict
 
-BUILT_INS = ['echo', 'exit', 'type', 'pwd', 'complete']
+BUILT_INS = ['echo', 'exit', 'type', 'pwd', 'complete', 'jobs']
 matches = []
 lcp = ""
 completions : Dict[str, str] = {}
