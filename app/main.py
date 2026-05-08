@@ -30,6 +30,17 @@ def process_complete_command(args, argl):
         if not completions.get(argl[2]):
             completions[argl[2]] = argl[1] # e.g. (git, <PATH>)
 
+def run_complete_process(args, env):
+    try:
+        op = subprocess.run(args, capture_output=True, text=True, env=env)
+        if op.stdout.strip():
+            return [f"{op.stdout.strip()} "]
+    except Exception as e:
+        print(f"error: {type(e).__name__}: {e}")
+        return []
+
+    return []
+
 #Not used anywhere
 def find_longest_common_prefix(arr: List[str]):
     if not arr : return ""
@@ -86,9 +97,8 @@ def auto_complete(text, state):
         if len(ll) == 1:
             if completions.get(ll[0]):
                 cmd = completions.get(ll[0])
-                op = subprocess.run([cmd], capture_output=True, text=True)
-                if op.stdout.strip():
-                    matches = [f"{op.stdout.strip()} "]
+                env = get_env_for_completion(line)
+                matches = run_complete_process([cmd], env)
             else:
                 if text:
                     matches = [f"{bi} " for bi in BUILT_INS if bi.startswith(text)] or \
@@ -103,12 +113,7 @@ def auto_complete(text, state):
                 args.append(ll[0])
                 args.append(ll[2] if len(ll) > 2 else "")
                 args.append(ll[1])
-                try:
-                    op = subprocess.run(args, capture_output=True, text=True, env=env)
-                    if op.stdout.strip():
-                        matches = [f"{op.stdout.strip()} "]
-                except Exception as e:
-                    print(f"error: {type(e).__name__}: {e}")
+                matches = run_complete_process(args, env)
             else:
                 p = os.path.dirname(line.split()[-1]) if "/" in line.split()[-1] else '.'
                 matches = get_file_or_dir_matches(text, p)

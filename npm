@@ -1,2 +1,4 @@
 #!/usr/bin/env python3
-print("xyz")
+print("add")
+print("commit")
+print("push")
