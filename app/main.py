@@ -23,6 +23,8 @@ jobs: List[Job] = []
 def process_jobs_command(args, argl):
     global jobs
 
+    to_remove = []
+
     for idx, job in enumerate(jobs):
         marker = ' '
         if idx == len(jobs) - 1:
@@ -36,9 +38,12 @@ def process_jobs_command(args, argl):
         if job.process.poll() != None:
             status = "Done"
             cmd =  job.cmd[:-1]
-
+            to_remove.append(idx)
         print(f"{[job.job_no]}{marker}  {status:<24}{cmd}")
 
+    for idx in to_remove:
+        jobs.pop(idx)
+    
     return None
 
 def is_registred_completer(command):
