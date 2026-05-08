@@ -11,6 +11,7 @@ class Job:
     pid: int
     cmd: str
     status: str
+    process: subprocess.Popen
 
 
 BUILT_INS = ['echo', 'exit', 'type', 'pwd', 'complete', 'jobs']
@@ -28,8 +29,15 @@ def process_jobs_command(args, argl):
             marker = '+'
         elif idx == len(jobs) - 2:
             marker = '-'
+        
+        status = job.status
+        cmd = job.cmd
 
-        print(f"{[job.job_no]}{marker}  {job.status:<24}{job.cmd}")
+        if job.process.poll() != None:
+            status = "Done"
+            cmd =  job.cmd[:-1]
+
+        print(f"{[job.job_no]}{marker}  {status:<24}{cmd}")
 
     return None
 
@@ -350,7 +358,7 @@ def main():
                     if is_bg:
                         process = subprocess.Popen([command] + argl)
                         job_no = jobs[-1].job_no+1 if len(jobs) > 0 else 1
-                        job = Job(job_no, process.pid, user_input, "Running")
+                        job = Job(job_no, process.pid, user_input, "Running", process)
                         jobs.append(job)
                         print(f"{[job_no]} {process.pid}")
                     else:
