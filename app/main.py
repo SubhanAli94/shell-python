@@ -9,6 +9,9 @@ matches = []
 lcp = ""
 completions : Dict[str, str] = {}
 
+def process_jobs_command(args, argl):
+    return None
+
 def is_registred_completer(command):
     global completions
     return completions.get(command) != None
@@ -305,6 +308,8 @@ def main():
                 write_output_to_file(file_name, output, file_mode) if file_name else print(output)
             case 'cd':
                 process_cd_command(args)  
+            case 'jobs':
+                process_jobs_command(args, argl)
             case _:
                 command_path = process_executable_request(command)
                 if not command_path:
