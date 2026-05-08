@@ -19,8 +19,6 @@ lcp = ""
 completions : Dict[str, str] = {}
 jobs = [Job]
 
-job_id = 0
-
 def process_jobs_command(args, argl):
     return None
 
@@ -299,7 +297,7 @@ def main():
     else:
         readline.parse_and_bind('tab: complete')
     
-    global job_id
+    global jobs
 
     while True:
         # remove last element if it is &
@@ -345,8 +343,10 @@ def main():
                 else:  
                     if is_bg:
                         process = subprocess.Popen([command] + argl)
-                        job_id += 1
-                        print(f"{[job_id]} {process.pid}")
+                        job_no = jobs[-1].job_no if len(jobs) > 1 else 1
+                        job = Job(job_no, process.pid, user_input, "Running")
+                        jobs.append(job)
+                        print(f"{[job_no]} {process.pid}")
                     else:
                         p = subprocess.run([command] + argl, capture_output=True, text=True)
                         
