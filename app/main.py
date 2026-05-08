@@ -114,8 +114,8 @@ def auto_complete(text, state):
                 args = []
                 args.append(completions.get(ll[0]))
                 args.append(ll[0])
-                args.append(ll[2] if len(ll) > 2 else "")
-                args.append(ll[1])
+                args.append(ll[-1])
+                args.append(ll[-2])
                 matches = run_complete_process(args, env)
             else:
                 p = os.path.dirname(line.split()[-1]) if "/" in line.split()[-1] else '.'
