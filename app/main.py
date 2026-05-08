@@ -8,6 +8,7 @@ BUILT_INS = ['echo', 'exit', 'type', 'pwd', 'complete', 'jobs']
 matches = []
 lcp = ""
 completions : Dict[str, str] = {}
+job_id = 0
 
 def process_jobs_command(args, argl):
     return None
@@ -241,7 +242,7 @@ def parse_args(args):
             is_escaped = not is_escaped
 
         curr += char
-
+    
     output.append(curr)
 
     return output, o_file_name, None, 'w'
@@ -272,7 +273,13 @@ def write_output_to_file(file_name, output, file_mode = 'w'):
     with open(file_name, file_mode) as file:
         output += '\n' if output else ''
         file.write(output)
-        
+
+def is_bg_job(args):
+    if args[-1] == "&":
+        return args[:-1], True
+
+    return args, False
+    
 def main():
     
     readline.set_completer(auto_complete)
@@ -281,11 +288,21 @@ def main():
     else:
         readline.parse_and_bind('tab: complete')
     
+    global job_id
+
     while True:
+        # remove last element if it is &
+        # continue with remaining list of args and argl
+        # Run the remaining commanf in BG
+        # print incremental bg_idx (1, 2, 3, ...) and process id
+        # show prompt
         user_input = input("$ ")
         
         parsed_input, op_file_name, err_file_name, file_mode = parse_args(user_input.strip())
+        parsed_input, is_bg = is_bg_job(parsed_input)
+
         command = parsed_input[0]
+
         argl = parsed_input[1:]
         args = " ".join(parsed_input[1:])
 
@@ -315,26 +332,30 @@ def main():
                 if not command_path:
                     print(f"{user_input}: command not found")
                 else:  
-                    p = subprocess.run([command] + argl, capture_output=True, text=True)
-                    
-                    stripped_err = p.stderr.strip()
-                    stripped_op = p.stdout.strip()
-                    if stripped_err:
-                        if err_file_name:
-                            write_output_to_file(err_file_name, stripped_err, file_mode)
+                    if is_bg:
+                        process = subprocess.Popen([command] + argl)
+                        job_id += 1
+                        print(f"{[job_id]} {process.pid}")
+                    else:
+                        p = subprocess.run([command] + argl, capture_output=True, text=True)
                         
-                        elif op_file_name:
-                            write_output_to_file(op_file_name, '', file_mode)
-                            print(stripped_err)
-                        else:
-                            print(stripped_err)
-                        
-
-                    if stripped_op:
-                        if op_file_name:
-                            write_output_to_file(op_file_name, stripped_op, file_mode)
-                        else:
-                            print(stripped_op)
+                        stripped_err = p.stderr.strip()
+                        stripped_op = p.stdout.strip()
+                        if stripped_err:
+                            if err_file_name:
+                                write_output_to_file(err_file_name, stripped_err, file_mode)
+                            
+                            elif op_file_name:
+                                write_output_to_file(op_file_name, '', file_mode)
+                                print(stripped_err)
+                            else:
+                                print(stripped_err)
+                            
+                        if stripped_op:
+                            if op_file_name:
+                                write_output_to_file(op_file_name, stripped_op, file_mode)
+                            else:
+                                print(stripped_op)
                     
     pass
 
