@@ -22,9 +22,13 @@ jobs: List[Job] = []
 def process_jobs_command(args, argl):
     global jobs
 
-    markers = {0:'+', 1:'-'}
-    for idx, job in enumerate(reversed(jobs)):
-        marker = markers.get(idx, ' ')
+    for idx, job in enumerate(jobs):
+        marker = ' '
+        if idx == len(jobs) - 1:
+            marker = '+'
+        elif idx == len(jobs) - 2:
+            marker = '-'
+
         print(f"{[job.job_no]}{marker}  {job.status:<24}{job.cmd}")
 
     return None
@@ -345,7 +349,7 @@ def main():
                 else:  
                     if is_bg:
                         process = subprocess.Popen([command] + argl)
-                        job_no = jobs[-1].job_no if len(jobs) > 1 else 1
+                        job_no = jobs[-1].job_no+1 if len(jobs) > 0 else 1
                         job = Job(job_no, process.pid, user_input, "Running")
                         jobs.append(job)
                         print(f"{[job_no]} {process.pid}")
