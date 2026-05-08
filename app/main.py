@@ -33,8 +33,11 @@ def process_complete_command(args, argl):
 def run_complete_process(args, env):
     try:
         op = subprocess.run(args, capture_output=True, text=True, env=env)
-        if op.stdout.strip():
-            return [f"{op.stdout.strip()} "]
+        stripped_op = op.stdout.strip()
+        if stripped_op:
+            op_list = op.stdout.strip().split('\n')
+            op_list = [f"{op} " for op in op_list] 
+            return op_list
     except Exception as e:
         print(f"error: {type(e).__name__}: {e}")
         return []
