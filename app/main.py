@@ -362,7 +362,7 @@ def write_history_to_file(path, op = 'w'):
     global last_history_idx
 
     cmd_h = commands_history if last_history_idx == None else commands_history[last_history_idx:]
-    last_history_idx = len(commands_history)-1
+    last_history_idx = len(commands_history)
     try:
         with open(path, op) as f:
             f.writelines(cmd + '\n' for cmd in cmd_h)
