@@ -346,6 +346,17 @@ def clear_redirect(saved_stdout):
         os.dup2(saved_stdout, 1)
         os.close(saved_stdout)
 
+def process_history_from_file(path):
+    global commands_history
+    try:
+        with open(path, 'r') as f:
+            h = f.read().splitlines()
+            commands_history += h
+    except FileNotFoundError:
+        pass
+    
+
+
 def main():
     
     readline.set_completer(auto_complete)
@@ -410,6 +421,10 @@ def main():
                             if argl[0].isdigit():
                                 n = int(argl[0])
                                 idx = len(commands_history) - n  if len(commands_history) >= n else 0
+                            
+                            if len(argl) == 2 and argl[0] == '-r':
+                                process_history_from_file(argl[2])
+
 
                         while idx < len(commands_history):
                             print(f"{idx+1:>4}  {commands_history[idx]}")
