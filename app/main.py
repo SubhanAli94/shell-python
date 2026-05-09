@@ -17,9 +17,11 @@ class Job:
 BUILT_INS = ['echo', 'exit', 'type', 'pwd', 'complete', 'jobs', 'history']
 matches = []
 commands_history = []
+last_history_idx = None
 lcp = ""
 completions : Dict[str, str] = {}
 jobs: List[Job] = []
+
 
 def process_jobs_command(args, argl):
     global jobs
@@ -357,9 +359,13 @@ def read_history_from_file(path):
 
 def write_history_to_file(path, op = 'w'):
     global commands_history
+    global last_history_idx
+
+    cmd_h = commands_history if last_history_idx == None else commands_history[last_history_idx:]
+    last_history_idx = len(commands_history)-1
     try:
         with open(path, op) as f:
-            f.writelines(cmd + '\n' for cmd in commands_history)
+            f.writelines(cmd + '\n' for cmd in cmd_h)
     except FileNotFoundError:
         pass
 
