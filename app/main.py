@@ -138,7 +138,7 @@ def get_file_or_dir_matches(text = '', dir_path = '.'):
         return [f"{dirs[0]}{os.sep}"]
     
     if len(files) == 1 and not dirs:
-        return [f"{files[0]} "]
+        return [f"{files[0][len(text):]} "]
 
     dirs = [f"{dir}{os.sep}" for dir in dirs]
     files = [f"{file} " for file in files]    
