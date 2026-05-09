@@ -377,14 +377,17 @@ def main():
         if not commands:
             commands = [parsed_input]
 
-        for idx, command in enumerate(commands):
-            command = command[0]
-            argl = command[1:]
-            args = " ".join(command[1:])
+        prev_r = None
+        processes = []
+        
+        for idx, cmd in enumerate(commands):
+            command = cmd[0]
+            argl = cmd[1:]
+            args = " ".join(cmd[1:])
 
             match command:
                 case 'exit':
-                    break
+                    sys.exit(0)
                 case 'type':
                     if (output := process_type_command(args)) is not None:
                         file_name = op_file_name or err_file_name
@@ -408,33 +411,56 @@ def main():
                     if not command_path:
                         print(f"{user_input}: command not found")
                     else:  
-                        if is_bg:
-                            process = subprocess.Popen([command] + argl)
-                            job_no = next_job_number()
-                            job = Job(job_no, process.pid, user_input, "Running", process)
-                            jobs.append(job)
-                            print(f"{[job_no]} {process.pid}")
-                        else:
-                            p = subprocess.run([command] + argl, capture_output=True, text=True)
+                        if len(commands) > 1:
+                            #piping
+                            if idx < len(commands) - 1:
+                                r, w = os.pipe()
+
+                            if prev_r:
+                                if idx < len(commands) - 1:
+                                    p = subprocess.Popen([command] + argl, stdout=w, stdin=prev_r)
+                                    processes.append(p)
+                                else:
+                                    p = subprocess.Popen([command] + argl, stdin=prev_r)
+                                    processes.append(p)
+                                os.close(prev_r)
+                            else:
+                                p = subprocess.Popen([command] + argl, stdout=w)
+                                processes.append(p)
                             
-                            stripped_err = p.stderr.strip()
-                            stripped_op = p.stdout.strip()
-                            if stripped_err:
-                                if err_file_name:
-                                    write_output_to_file(err_file_name, stripped_err, file_mode)
+                            if idx < len(commands) - 1:
+                                prev_r = r
+                                os.close(w)
+                        else: 
+                            if is_bg:
+                                process = subprocess.Popen([command] + argl)
+                                job_no = next_job_number()
+                                job = Job(job_no, process.pid, user_input, "Running", process)
+                                jobs.append(job)
+                                print(f"{[job_no]} {process.pid}")
+                            else:
+                                p = subprocess.run([command] + argl, capture_output=True, text=True)
                                 
-                                elif op_file_name:
-                                    write_output_to_file(op_file_name, '', file_mode)
-                                    print(stripped_err)
-                                else:
-                                    print(stripped_err)
-                                
-                            if stripped_op:
-                                if op_file_name:
-                                    write_output_to_file(op_file_name, stripped_op, file_mode)
-                                else:
-                                    print(stripped_op)
-                        
+                                stripped_err = p.stderr.strip()
+                                stripped_op = p.stdout.strip()
+                                if stripped_err:
+                                    if err_file_name:
+                                        write_output_to_file(err_file_name, stripped_err, file_mode)
+                                    
+                                    elif op_file_name:
+                                        write_output_to_file(op_file_name, '', file_mode)
+                                        print(stripped_err)
+                                    else:
+                                        print(stripped_err)
+                                    
+                                if stripped_op:
+                                    if op_file_name:
+                                        write_output_to_file(op_file_name, stripped_op, file_mode)
+                                    else:
+                                        print(stripped_op)
+
+        for p in processes:
+            p.wait()                  
     pass
 
 if __name__ == "__main__":
