@@ -139,11 +139,6 @@ def get_file_or_dir_matches(text = '', dir_path = '.'):
     
     if len(files) == 1 and not dirs:
         return [f"{files[0]} "]
-    
-    # if not lcp:
-    #     print(f"here:  {lcp}")
-    #     lcp = find_longest_common_prefix(res)
-    #     if lcp: return [lcp]
 
     dirs = [f"{dir}{os.sep}" for dir in dirs]
     files = [f"{file} " for file in files]    
