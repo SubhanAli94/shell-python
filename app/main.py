@@ -378,10 +378,12 @@ def main():
         readline.parse_and_bind('tab: complete')
     
     global jobs
+    global last_history_idx
     hp = os.environ.get('HISTFILE')
     if hp:
         read_history_from_file(hp)
-        
+        last_history_idx = len(commands_history)
+
     while True:
         reap_bg_jobs()
         user_input = input("$ ")
