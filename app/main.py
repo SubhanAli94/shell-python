@@ -13,7 +13,7 @@ class Job:
     status: str
     process: subprocess.Popen
 
-
+is_libedit = 'libedit' in readline.__doc__
 BUILT_INS = ['echo', 'exit', 'type', 'pwd', 'complete', 'jobs', 'history']
 matches = []
 lcp = ""
@@ -138,7 +138,8 @@ def get_file_or_dir_matches(text = '', dir_path = '.'):
         return [f"{dirs[0]}{os.sep}"]
     
     if len(files) == 1 and not dirs:
-        return [f"{files[0][len(text):]} "]
+        match = files[0] if is_libedit else files[0][len(text):]
+        return [f"{match} "]
 
     dirs = [f"{dir}{os.sep}" for dir in dirs]
     files = [f"{file} " for file in files]    
