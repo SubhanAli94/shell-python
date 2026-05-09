@@ -378,12 +378,12 @@ def main():
         readline.parse_and_bind('tab: complete')
     
     global jobs
-
+    hp = os.environ.get('HISTFILE')
+    if hp:
+        read_history_from_file(hp)
+        
     while True:
         reap_bg_jobs()
-        hp = os.environ.get('HISTFILE')
-        if hp:
-            read_history_from_file(hp)
         user_input = input("$ ")
         
         parsed_input, op_file_name, err_file_name, file_mode = parse_args(user_input.strip())
@@ -427,7 +427,7 @@ def main():
                 case 'exit':
                     if hp:
                         write_history_to_file(hp, 'a')
-                        
+
                     sys.exit(0)
                 case 'complete':
                     process_complete_command(args, argl)
