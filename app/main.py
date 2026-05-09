@@ -379,25 +379,53 @@ def main():
 
         prev_r = None
         processes = []
-        
         for idx, cmd in enumerate(commands):
             command = cmd[0]
             argl = cmd[1:]
             args = " ".join(cmd[1:])
 
+            r, w = None, None
+            if len(commands) > 1 and idx < len(commands) - 1:
+                r, w = os.pipe()
+                                
             match command:
                 case 'exit':
                     sys.exit(0)
                 case 'type':
                     if (output := process_type_command(args)) is not None:
+                        saved_stdout = None
+                        if w:
+                            saved_stdout = os.dup(1)
+                            os.dup2(w, 1)
+                        
                         file_name = op_file_name or err_file_name
                         write_output_to_file(file_name, output, file_mode) if file_name else print(output)
+
+                        if saved_stdout is not None:
+                            os.dup2(saved_stdout, 1)
+                            os.close(saved_stdout)
+                    
+                        if w is not None:
+                            os.close(w)
+                            prev_r = r
                 case 'complete':
                     process_complete_command(args, argl)
 
                 case 'echo':
+                    saved_stdout = None
+                    if w:
+                        saved_stdout = os.dup(1)
+                        os.dup2(w, 1)
+
                     write_output_to_file(op_file_name, args, file_mode) if op_file_name else print(args)
-                        
+
+                    if saved_stdout is not None:
+                        os.dup2(saved_stdout, 1)
+                        os.close(saved_stdout)
+                    
+                    if w is not None:
+                        os.close(w)
+                        prev_r = r
                 case 'pwd':
                     output = os.getcwd()
                     file_name = op_file_name or err_file_name
@@ -413,8 +441,6 @@ def main():
                     else:  
                         if len(commands) > 1:
                             #piping
-                            if idx < len(commands) - 1:
-                                r, w = os.pipe()
 
                             if prev_r:
                                 if idx < len(commands) - 1:
@@ -460,7 +486,8 @@ def main():
                                         print(stripped_op)
 
         for p in processes:
-            p.wait()                  
+            p.wait()      
+       
     pass
 
 if __name__ == "__main__":
