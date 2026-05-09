@@ -404,8 +404,17 @@ def main():
                     process_complete_command(args, argl)
 
                 case 'history':
-                    for idx, history in enumerate(commands_history):
-                        print(f"  {idx+1}  {history}")
+                    if len(commands_history) > 0:
+                        idx = 0
+                        if len(argl) > 0:
+                            if argl[0].isdigit():
+                                n = int(argl[0])
+                                idx = len(commands_history) - n  if len(commands_history) >= n else 0
+
+                        while idx < len(commands_history):
+                            print(f"{idx+1:>4}  {commands_history[idx]}")
+                            idx += 1
+
                 case 'type':
                     if (output := process_type_command(args)) is not None:
                         saved_stdout = None
