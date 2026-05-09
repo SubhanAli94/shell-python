@@ -14,7 +14,7 @@ class Job:
     process: subprocess.Popen
 
 
-BUILT_INS = ['echo', 'exit', 'type', 'pwd', 'complete', 'jobs', 'history']
+BUILT_INS = ['echo', 'exit', 'type', 'pwd', 'complete', 'jobs', 'history', 'declare']
 matches = []
 commands_history = []
 last_history_idx = None
