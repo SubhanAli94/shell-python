@@ -423,7 +423,8 @@ def main():
                                 idx = len(commands_history) - n  if len(commands_history) >= n else 0
                             
                             if len(argl) == 2 and argl[0] == '-r':
-                                process_history_from_file(argl[2])
+                                process_history_from_file(argl[1])
+                                break
 
 
                         while idx < len(commands_history):
