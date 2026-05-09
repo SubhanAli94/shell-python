@@ -434,6 +434,11 @@ def main():
                 case 'complete':
                     process_complete_command(args, argl)
 
+                case 'declare':
+                    if len(argl) == 2:
+                        if argl[0] == '-p':
+                            print(f"declare: {argl[1]}: not found")
+                                
                 case 'history':
                     if len(commands_history) > 0:
                         idx = 0
