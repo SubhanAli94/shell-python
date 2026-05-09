@@ -381,6 +381,7 @@ def main():
 
     while True:
         reap_bg_jobs()
+        read_history_from_file(os.environ('HISTFILE'))
         user_input = input("$ ")
         
         parsed_input, op_file_name, err_file_name, file_mode = parse_args(user_input.strip())
