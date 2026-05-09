@@ -14,7 +14,7 @@ class Job:
     process: subprocess.Popen
 
 
-BUILT_INS = ['echo', 'exit', 'type', 'pwd', 'complete', 'jobs']
+BUILT_INS = ['echo', 'exit', 'type', 'pwd', 'complete', 'jobs', 'history']
 matches = []
 lcp = ""
 completions : Dict[str, str] = {}
