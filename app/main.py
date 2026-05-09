@@ -339,7 +339,17 @@ def is_bg_job(args):
         return args[:-1], True
 
     return args, False
-    
+
+def redirect_write(w):
+    saved_stdout = os.dup(1)
+    os.dup2(w, 1)
+    return saved_stdout
+
+def clear_redirect(saved_stdout):
+    if saved_stdout is not None:
+        os.dup2(saved_stdout, 1)
+        os.close(saved_stdout)
+
 def main():
     
     readline.set_completer(auto_complete)
@@ -391,37 +401,31 @@ def main():
             match command:
                 case 'exit':
                     sys.exit(0)
+                case 'complete':
+                    process_complete_command(args, argl)
+
                 case 'type':
                     if (output := process_type_command(args)) is not None:
                         saved_stdout = None
                         if w:
-                            saved_stdout = os.dup(1)
-                            os.dup2(w, 1)
+                            saved_stdout = redirect_write(w)
                         
                         file_name = op_file_name or err_file_name
                         write_output_to_file(file_name, output, file_mode) if file_name else print(output)
 
-                        if saved_stdout is not None:
-                            os.dup2(saved_stdout, 1)
-                            os.close(saved_stdout)
+                        clear_redirect(saved_stdout)
                     
                         if w is not None:
                             os.close(w)
                             prev_r = r
-                case 'complete':
-                    process_complete_command(args, argl)
-
                 case 'echo':
                     saved_stdout = None
                     if w:
-                        saved_stdout = os.dup(1)
-                        os.dup2(w, 1)
+                        saved_stdout = redirect_write(w)
 
                     write_output_to_file(op_file_name, args, file_mode) if op_file_name else print(args)
 
-                    if saved_stdout is not None:
-                        os.dup2(saved_stdout, 1)
-                        os.close(saved_stdout)
+                    clear_redirect(saved_stdout)
                     
                     if w is not None:
                         os.close(w)
