@@ -16,6 +16,7 @@ class Job:
 
 BUILT_INS = ['echo', 'exit', 'type', 'pwd', 'complete', 'jobs', 'history']
 matches = []
+commands_history = []
 lcp = ""
 completions : Dict[str, str] = {}
 jobs: List[Job] = []
@@ -365,6 +366,9 @@ def main():
         next_input = ""
         temp_input = parsed_input
         commands = []
+        
+        commands_history.append(user_input.strip())
+
         while(True):
             if '|' in temp_input:
                 pipeIdx = temp_input.index('|')
@@ -399,6 +403,9 @@ def main():
                 case 'complete':
                     process_complete_command(args, argl)
 
+                case 'history':
+                    for idx, history in enumerate(commands_history):
+                        print(f"  {idx+1}  {history}")
                 case 'type':
                     if (output := process_type_command(args)) is not None:
                         saved_stdout = None
