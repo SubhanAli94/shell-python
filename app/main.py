@@ -425,7 +425,9 @@ def main():
                                 
             match command:
                 case 'exit':
-                    write_history_to_file(hp, 'a')
+                    if hp:
+                        write_history_to_file(hp, 'a')
+                        
                     sys.exit(0)
                 case 'complete':
                     process_complete_command(args, argl)
