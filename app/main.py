@@ -433,7 +433,7 @@ def main():
                                     read_history_from_file(argl[1])
                                     break
                                 elif argl[0] == '-w' or argl[0] == '-a':
-                                    write_history_to_file(argl[1], argl[0])
+                                    write_history_to_file(argl[1], 'w' if argl[0] == '-w' else 'a')
                                     break
 
                         while idx < len(commands_history):
