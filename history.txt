@@ -1,2 +1,4 @@
-echo abc
-cat ls
+echo ali
+echi bani
+echo bani
+history -w ./history.txt

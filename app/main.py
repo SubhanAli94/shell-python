@@ -346,12 +346,20 @@ def clear_redirect(saved_stdout):
         os.dup2(saved_stdout, 1)
         os.close(saved_stdout)
 
-def process_history_from_file(path):
+def read_history_from_file(path):
     global commands_history
     try:
         with open(path, 'r') as f:
             h = f.read().splitlines()
             commands_history += h
+    except FileNotFoundError:
+        pass
+
+def write_history_to_file(path):
+    global commands_history
+    try:
+        with open(path, 'w') as f:
+            f.writelines(cmd + '\n' for cmd in commands_history)
     except FileNotFoundError:
         pass
     
@@ -422,10 +430,13 @@ def main():
                                 n = int(argl[0])
                                 idx = len(commands_history) - n  if len(commands_history) >= n else 0
                             
-                            if len(argl) == 2 and argl[0] == '-r':
-                                process_history_from_file(argl[1])
-                                break
-
+                            if len(argl) == 2:
+                                if argl[0] == '-r':
+                                    read_history_from_file(argl[1])
+                                    break
+                                elif argl[0] == '-w':
+                                    write_history_to_file(argl[1])
+                                    break
 
                         while idx < len(commands_history):
                             print(f"{idx+1:>4}  {commands_history[idx]}")
