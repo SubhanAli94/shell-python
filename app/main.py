@@ -357,64 +357,84 @@ def main():
         parsed_input, op_file_name, err_file_name, file_mode = parse_args(user_input.strip())
         parsed_input, is_bg = is_bg_job(parsed_input)
 
-        command = parsed_input[0]
-
-        argl = parsed_input[1:]
-        args = " ".join(parsed_input[1:])
-
-        match command:
-            case 'exit':
+        next_input = ""
+        temp_input = parsed_input
+        commands = []
+        while(True):
+            if '|' in temp_input:
+                pipeIdx = temp_input.index('|')
+                commands.append(temp_input[:pipeIdx])
+                if len(temp_input) > pipeIdx+1: 
+                    temp_input = temp_input[pipeIdx+1:] 
+                else:
+                    break
+            else:
+                if len(temp_input) > 0:
+                    commands.append(temp_input)
                 break
-            case 'type':
-                if (output := process_type_command(args)) is not None:
+
+
+        if not commands:
+            commands = [parsed_input]
+
+        for idx, command in enumerate(commands):
+            command = command[0]
+            argl = command[1:]
+            args = " ".join(command[1:])
+
+            match command:
+                case 'exit':
+                    break
+                case 'type':
+                    if (output := process_type_command(args)) is not None:
+                        file_name = op_file_name or err_file_name
+                        write_output_to_file(file_name, output, file_mode) if file_name else print(output)
+                case 'complete':
+                    process_complete_command(args, argl)
+
+                case 'echo':
+                    write_output_to_file(op_file_name, args, file_mode) if op_file_name else print(args)
+                        
+                case 'pwd':
+                    output = os.getcwd()
                     file_name = op_file_name or err_file_name
                     write_output_to_file(file_name, output, file_mode) if file_name else print(output)
-            case 'complete':
-                process_complete_command(args, argl)
-
-            case 'echo':
-                write_output_to_file(op_file_name, args, file_mode) if op_file_name else print(args)
-                    
-            case 'pwd':
-                output = os.getcwd()
-                file_name = op_file_name or err_file_name
-                write_output_to_file(file_name, output, file_mode) if file_name else print(output)
-            case 'cd':
-                process_cd_command(args)  
-            case 'jobs':
-                process_jobs_command(args, argl)
-            case _:
-                command_path = process_executable_request(command)
-                if not command_path:
-                    print(f"{user_input}: command not found")
-                else:  
-                    if is_bg:
-                        process = subprocess.Popen([command] + argl)
-                        job_no = next_job_number()
-                        job = Job(job_no, process.pid, user_input, "Running", process)
-                        jobs.append(job)
-                        print(f"{[job_no]} {process.pid}")
-                    else:
-                        p = subprocess.run([command] + argl, capture_output=True, text=True)
+                case 'cd':
+                    process_cd_command(args)  
+                case 'jobs':
+                    process_jobs_command(args, argl)
+                case _:
+                    command_path = process_executable_request(command)
+                    if not command_path:
+                        print(f"{user_input}: command not found")
+                    else:  
+                        if is_bg:
+                            process = subprocess.Popen([command] + argl)
+                            job_no = next_job_number()
+                            job = Job(job_no, process.pid, user_input, "Running", process)
+                            jobs.append(job)
+                            print(f"{[job_no]} {process.pid}")
+                        else:
+                            p = subprocess.run([command] + argl, capture_output=True, text=True)
+                            
+                            stripped_err = p.stderr.strip()
+                            stripped_op = p.stdout.strip()
+                            if stripped_err:
+                                if err_file_name:
+                                    write_output_to_file(err_file_name, stripped_err, file_mode)
+                                
+                                elif op_file_name:
+                                    write_output_to_file(op_file_name, '', file_mode)
+                                    print(stripped_err)
+                                else:
+                                    print(stripped_err)
+                                
+                            if stripped_op:
+                                if op_file_name:
+                                    write_output_to_file(op_file_name, stripped_op, file_mode)
+                                else:
+                                    print(stripped_op)
                         
-                        stripped_err = p.stderr.strip()
-                        stripped_op = p.stdout.strip()
-                        if stripped_err:
-                            if err_file_name:
-                                write_output_to_file(err_file_name, stripped_err, file_mode)
-                            
-                            elif op_file_name:
-                                write_output_to_file(op_file_name, '', file_mode)
-                                print(stripped_err)
-                            else:
-                                print(stripped_err)
-                            
-                        if stripped_op:
-                            if op_file_name:
-                                write_output_to_file(op_file_name, stripped_op, file_mode)
-                            else:
-                                print(stripped_op)
-                    
     pass
 
 if __name__ == "__main__":
