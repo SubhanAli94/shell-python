@@ -355,15 +355,13 @@ def read_history_from_file(path):
     except FileNotFoundError:
         pass
 
-def write_history_to_file(path):
+def write_history_to_file(path, op = 'w'):
     global commands_history
     try:
-        with open(path, 'w') as f:
+        with open(path, op) as f:
             f.writelines(cmd + '\n' for cmd in commands_history)
     except FileNotFoundError:
         pass
-    
-
 
 def main():
     
@@ -434,8 +432,8 @@ def main():
                                 if argl[0] == '-r':
                                     read_history_from_file(argl[1])
                                     break
-                                elif argl[0] == '-w':
-                                    write_history_to_file(argl[1])
+                                elif argl[0] == '-w' or argl[0] == '-a':
+                                    write_history_to_file(argl[1], argl[0])
                                     break
 
                         while idx < len(commands_history):
