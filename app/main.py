@@ -371,6 +371,30 @@ def write_history_to_file(path, op = 'w'):
     except FileNotFoundError:
         pass
 
+def process_arg_for_vars(argl):
+    new_argl = []
+    for arg in argl:
+        if "$" in arg and '{' in arg and '}' in arg:
+            s_idx = arg.index('{') + 1
+            e_idx = arg.index('}')
+            v = shell_vars.get(arg[s_idx:e_idx])
+            if v:
+                op = arg[:idx] + v
+                new_argl.append(op)
+                continue
+        
+        if "$" in arg:
+            idx = arg.index('$')
+            v = shell_vars.get(arg[idx+1:])
+            if v:
+                op = arg[:idx] + v
+                new_argl.append(op)
+                continue
+
+        new_argl.append(arg)
+    
+    return new_argl
+
 def main():
     
     readline.set_completer(auto_complete)
@@ -425,19 +449,8 @@ def main():
             argl = cmd[1:]
 
             new_argl = []
-            for arg in argl:
-                if "$" in arg:
-                    idx = arg.index('$')
-
-                    v = shell_vars.get(arg[idx+1:])
-                    if v:
-                        op = arg[:idx] + v
-                        new_argl.append(op)
-                        continue
-
-                new_argl.append(arg)
             
-            argl = new_argl
+            argl = process_arg_for_vars(argl)
 
             args = " ".join(argl)
 
