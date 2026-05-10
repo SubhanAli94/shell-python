@@ -446,7 +446,7 @@ def main():
                                 print(f"declare: {argl[1]}: not found")
                     elif len(argl) == 1 and '=' in argl[0]:
                             v = argl[0].split('=')
-                            shell_vars[0] = v[1]
+                            shell_vars[v[0]] = v[1]
 
                                 
                 case 'history':
