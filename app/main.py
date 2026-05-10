@@ -434,7 +434,8 @@ def main():
                         continue
 
                 new_argl.append(arg)
-                    
+            
+            argl = new_argl
 
             args = " ".join(argl)
 
