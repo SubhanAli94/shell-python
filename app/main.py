@@ -371,17 +371,20 @@ def write_history_to_file(path, op = 'w'):
     except FileNotFoundError:
         pass
 
+def process_vars_with_braces(arg):
+    def check_patter(match):
+        return shell_vars.get(match.group(1), '')
+        
+    reg = '\$\{([a-zA-Z_][a-zA-Z0-9_]*)\}'
+    return re.sub(reg, check_patter, arg)
+
 def process_arg_for_vars(argl):
     new_argl = []
     for arg in argl:
         if "$" in arg and '{' in arg and '}' in arg:
-            s_idx = arg.index('{') + 1
-            e_idx = arg.index('}')
-            v = shell_vars.get(arg[s_idx:e_idx])
-            if v:
-                op = arg[:idx] + v
-                new_argl.append(op)
-                continue
+            op = process_vars_with_braces(arg)
+            new_argl.append(op)
+            continue
         
         if "$" in arg:
             idx = arg.index('$')
