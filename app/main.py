@@ -375,7 +375,7 @@ def process_vars_with_braces(arg):
     def check_patter(match):
         return shell_vars.get(match.group(1), '')
         
-    reg = '\$\{([a-zA-Z_][a-zA-Z0-9_]*)\}'
+    reg = r'\$\{([a-zA-Z_][a-zA-Z0-9_]*)\}'
     return re.sub(reg, check_patter, arg)
 
 def process_arg_for_vars(argl):
