@@ -426,11 +426,13 @@ def main():
 
             new_argl = []
             for arg in argl:
-                if arg[0] == "$":
-                    v = shell_vars.get(arg[1:])
+                if "$" in arg:
+                    idx = arg.index('$')
+
+                    v = shell_vars.get(arg[idx+1:])
                     if v:
-                        #replace arg with new var
-                        new_argl.append(v)
+                        op = arg[:idx] + v
+                        new_argl.append(op)
                         continue
 
                 new_argl.append(arg)
