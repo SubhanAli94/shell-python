@@ -423,7 +423,20 @@ def main():
         for idx, cmd in enumerate(commands):
             command = cmd[0]
             argl = cmd[1:]
-            args = " ".join(cmd[1:])
+
+            new_argl = []
+            for arg in argl:
+                if arg[0] == "$":
+                    v = shell_vars.get(arg[1:])
+                    if v:
+                        #replace arg with new var
+                        new_argl.append(v)
+                        continue
+
+                new_argl.append(arg)
+                    
+
+            args = " ".join(argl)
 
             r, w = None, None
             if len(commands) > 1 and idx < len(commands) - 1:
