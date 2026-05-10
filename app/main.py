@@ -396,6 +396,7 @@ def process_arg_for_vars(argl):
 
         new_argl.append(arg)
     
+    new_argl = [arg for arg in new_argl if arg != '']
     return new_argl
 
 def main():
