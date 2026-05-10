@@ -388,11 +388,10 @@ def process_arg_for_vars(argl):
         
         if "$" in arg:
             idx = arg.index('$')
-            v = shell_vars.get(arg[idx+1:])
-            if v:
-                op = arg[:idx] + v
-                new_argl.append(op)
-                continue
+            v = shell_vars.get(arg[idx+1:], '')
+            op = arg[:idx] + v
+            new_argl.append(op)
+            continue
 
         new_argl.append(arg)
     
