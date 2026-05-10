@@ -451,7 +451,7 @@ def main():
                                 v = v.split('=')
                                 shell_vars[v[0]] = v[1]
                             else:
-                                print(f"declare: `{v}`: not a valid identifier")
+                                print(f"declare: `{v}': not a valid identifier")
                                 
                 case 'history':
                     if len(commands_history) > 0:
