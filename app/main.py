@@ -4,6 +4,7 @@ import readline
 import sys
 from typing import List, Dict
 from dataclasses import dataclass
+import re
 
 @dataclass
 class Job:
@@ -446,12 +447,12 @@ def main():
                             else:
                                 print(f"declare: {argl[1]}: not found")
                     elif len(argl) == 1 and '=' in argl[0]:
-                            v = argl[0]
-                            if '_' == v[0] or v[0].isalpha():
-                                v = v.split('=')
+                            v = argl[0].split('=')
+                            pattern = r'^[_a-zA_Z][a-zA-Z0-9_]*$'
+                            if re.match(pattern, v[0]):
                                 shell_vars[v[0]] = v[1]
                             else:
-                                print(f"declare: `{v}': not a valid identifier")
+                                print(f"declare: `{argl[0]}': not a valid identifier")
                                 
                 case 'history':
                     if len(commands_history) > 0:
