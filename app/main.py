@@ -441,7 +441,8 @@ def main():
                     if len(argl) == 2:
                         if argl[0] == '-p':
                             if shell_vars.get(argl[1]):
-                                print(f"declare -- {argl[0]}=\"{argl[1]}\"")
+                                v = shell_vars.get(argl[1])
+                                print(f"declare -- {argl[1]}=\"{v}\"")
                             else:
                                 print(f"declare: {argl[1]}: not found")
                     elif len(argl) == 1 and '=' in argl[0]:
