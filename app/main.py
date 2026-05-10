@@ -461,7 +461,7 @@ def main():
                                 print(f"declare: {argl[1]}: not found")
                     elif len(argl) == 1 and '=' in argl[0]:
                             v = argl[0].split('=')
-                            pattern = r'^[_a-zA_Z][a-zA-Z0-9_]*$'
+                            pattern = r'^[_a-zA-Z][a-zA-Z0-9_]*$'
                             if re.match(pattern, v[0]):
                                 shell_vars[v[0]] = v[1]
                             else:
