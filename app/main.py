@@ -446,9 +446,12 @@ def main():
                             else:
                                 print(f"declare: {argl[1]}: not found")
                     elif len(argl) == 1 and '=' in argl[0]:
-                            v = argl[0].split('=')
-                            shell_vars[v[0]] = v[1]
-
+                            v = argl[0]
+                            if '_' == v[0] or v[0].isalpha():
+                                v = v.split('=')
+                                shell_vars[v[0]] = v[1]
+                            else:
+                                print(f"declare: `{v}`: not a valid identifier")
                                 
                 case 'history':
                     if len(commands_history) > 0:
