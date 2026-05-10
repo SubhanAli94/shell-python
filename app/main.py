@@ -21,6 +21,7 @@ last_history_idx = None
 lcp = ""
 completions : Dict[str, str] = {}
 jobs: List[Job] = []
+shell_vars = {}
 
 
 def process_jobs_command(args, argl):
@@ -379,6 +380,8 @@ def main():
     
     global jobs
     global last_history_idx
+    global shell_vars
+
     hp = os.environ.get('HISTFILE')
     if hp:
         read_history_from_file(hp)
@@ -437,7 +440,14 @@ def main():
                 case 'declare':
                     if len(argl) == 2:
                         if argl[0] == '-p':
-                            print(f"declare: {argl[1]}: not found")
+                            if shell_vars.get(argl[1]):
+                                print(f"declare -- {argl[0]}=\"{argl[1]}\"")
+                            else:
+                                print(f"declare: {argl[1]}: not found")
+                    elif len(argl) == 1 and '=' in argl[0]:
+                            v = argl[0].split('=')
+                            shell_vars[0] = v[1]
+
                                 
                 case 'history':
                     if len(commands_history) > 0:
